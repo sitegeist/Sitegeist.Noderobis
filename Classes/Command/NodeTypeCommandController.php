@@ -42,6 +42,10 @@ class NodeTypeCommandController extends CommandController
     protected $defaultPackageKey;
 
     /**
+     * @phpstan-param string[] $super
+     * @phpstan-param string[] $child
+     * @phpstan-param string[] $prop
+     *
      * @param string $name Node Name, last part of NodeType
      * @param string $packageKey (optional) Package, uses fallback from configuration
      * @param array $super SuperTypes
@@ -67,7 +71,7 @@ class NodeTypeCommandController extends CommandController
 
     protected function determinePackageKey(?string $packageKey = null): string
     {
-        if ($packageKey) {
+        if ($packageKey !== null) {
             if ($this->packageManager->getPackage($packageKey)) {
                 return $packageKey;
             } else {
@@ -75,7 +79,7 @@ class NodeTypeCommandController extends CommandController
                 $this->quit(1);
             }
         }
-        if ($this->defaultPackageKey) {
+        if ($this->defaultPackageKey !== null) {
             if ($this->packageManager->getPackage($this->defaultPackageKey)) {
                 return $this->defaultPackageKey;
             } else {
