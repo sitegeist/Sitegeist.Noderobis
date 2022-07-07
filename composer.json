@@ -1,10 +1,9 @@
 {
     "name": "sitegeist/nodemerobis",
     "type": "neos-package",
-    "version": "1.0.0",
     "require": {
         "php": "^8.1",
-        "neos/neos": "~8.0"
+        "neos/neos": "~8.0 || dev-master"
     },
     "autoload": {
         "psr-4": {
