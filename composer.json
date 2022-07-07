@@ -1,6 +1,7 @@
 {
     "name": "sitegeist/nodemerobis",
     "type": "neos-package",
+    "license": "GPL-3.0-or-later",
     "require": {
         "php": "^8.1",
         "neos/neos": "~8.0 || dev-master"
