@@ -18,6 +18,7 @@ use Flowpack\SiteKickstarter\Domain\Modification\ModificationIterface;
 use Flowpack\SiteKickstarter\Domain\Specification\NodeTypeSpecificationFactory;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
+use Neos\Flow\Package\Exception\UnknownPackageException;
 use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Package\PackageManager;
 use Flowpack\SiteKickstarter\Domain\Generator\Fusion\ContentFusionRendererGenerator;
@@ -58,6 +59,9 @@ class NodeTypeCommandController extends CommandController
     {
         $packageKey = $this->determinePackageKey($packageKey);
 
+        /**
+         * @phpstan-ignore-next-line
+         */
         \Neos\Flow\var_dump(
             [
                 $packageKey,
@@ -72,22 +76,27 @@ class NodeTypeCommandController extends CommandController
     protected function determinePackageKey(?string $packageKey = null): string
     {
         if ($packageKey !== null) {
-            if ($this->packageManager->getPackage($packageKey)) {
+            try {
+                $this->packageManager->getPackage($packageKey);
                 return $packageKey;
-            } else {
-                $this->outputLine('Package %s not found', $packageKey);
+            } catch (UnknownPackageException) {
+                $this->outputLine('Package %s not found', [$packageKey]);
                 $this->quit(1);
+                die();
             }
         }
         if ($this->defaultPackageKey !== null) {
-            if ($this->packageManager->getPackage($this->defaultPackageKey)) {
+            try {
+                $this->packageManager->getPackage($this->defaultPackageKey);
                 return $this->defaultPackageKey;
-            } else {
-                $this->outputLine('Default Package %s not found', $this->defaultPackageKey);
+            } catch (UnknownPackageException) {
+                $this->outputLine('Default Package %s not found', [$this->defaultPackageKey]);
                 $this->quit(1);
+                die();
             }
         }
         $this->outputLine('No packageKey or default specified');
         $this->quit(1);
+        die();
     }
 }

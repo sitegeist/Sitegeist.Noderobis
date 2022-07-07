@@ -7,13 +7,13 @@ namespace Sitegeist\Nodemerobis\Domain\Specification;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * @implements \IteratorAggregate<int, TetheredNodeSpecification>
+ * @implements \IteratorAggregate<TetheredNodeSpecification>
  */
 #[Flow\Proxy(false)]
 class TetheredNodeSpecificationCollection implements \IteratorAggregate
 {
     /**
-     * @var array<int, TetheredNodeSpecification>
+     * @var array<TetheredNodeSpecification>
      */
     protected array $tetheredNodes;
 

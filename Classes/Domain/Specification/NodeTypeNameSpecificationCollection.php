@@ -7,13 +7,13 @@ namespace Sitegeist\Nodemerobis\Domain\Specification;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * @implements \IteratorAggregate<int, NodeTypeNameSpecification>
+ * @implements \IteratorAggregate<NodeTypeNameSpecification>
  */
 #[Flow\Proxy(false)]
 class NodeTypeNameSpecificationCollection implements \IteratorAggregate
 {
     /**
-     * @var array<int,NodeTypeNameSpecification>
+     * @var array<NodeTypeNameSpecification>
      */
     protected array $nameSpecifications;
 
@@ -38,7 +38,7 @@ class NodeTypeNameSpecificationCollection implements \IteratorAggregate
     }
 
     /**
-     * @return \ArrayIterator<int,NodeTypeNameSpecification>
+     * @return \ArrayIterator<int, NodeTypeNameSpecification>
      */
     public function getIterator(): \ArrayIterator
     {

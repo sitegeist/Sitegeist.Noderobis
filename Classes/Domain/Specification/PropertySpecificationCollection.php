@@ -7,13 +7,13 @@ namespace Sitegeist\Nodemerobis\Domain\Specification;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * @implements \IteratorAggregate<int, PropertySpecification>
+ * @implements \IteratorAggregate<PropertySpecification>
  */
 #[Flow\Proxy(false)]
 class PropertySpecificationCollection implements \IteratorAggregate
 {
     /**
-     * @var array<int, PropertySpecification>
+     * @var array<PropertySpecification>
      */
     protected array $nodeProperties;
 

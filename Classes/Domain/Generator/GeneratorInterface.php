@@ -8,10 +8,10 @@ declare(strict_types=1);
 
 namespace Sitegeist\Nodemerobis\Domain\Generator;
 
-use Flowpack\SiteKickstarter\Domain\Modification\ModificationIterface;
-use Flowpack\SiteKickstarter\Domain\Specification\NodeTypeSpecification;
+use Sitegeist\Nodemerobis\Domain\Modification\ModificationInterface;
+use Sitegeist\Nodemerobis\Domain\Specification\NodeTypeSpecification;
 
 interface GeneratorInterface
 {
-    public function generate(NodeTypeSpecification $nodeType): ModificationIterface;
+    public function generate(NodeTypeSpecification $nodeType): ModificationInterface;
 }
