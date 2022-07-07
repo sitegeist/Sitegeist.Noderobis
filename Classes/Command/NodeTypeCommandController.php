@@ -29,7 +29,6 @@ use Flowpack\SiteKickstarter\Domain\Modification\ModificationCollection;
  */
 class NodeTypeCommandController extends CommandController
 {
-
     /**
      * @var PackageManager
      * @Flow\Inject
@@ -87,5 +86,4 @@ class NodeTypeCommandController extends CommandController
         $this->outputLine('No packageKey or default specified');
         $this->quit(1);
     }
-
 }

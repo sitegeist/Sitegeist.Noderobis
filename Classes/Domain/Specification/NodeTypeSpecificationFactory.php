@@ -10,7 +10,6 @@ use Neos\Flow\Package\SitegeistageInterface;
 
 class NodeTypeSpecificationFactory
 {
-
     /**
      * @var NodeTypeManager
      * @Flow\Inject

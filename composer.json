@@ -11,9 +11,24 @@
             "Sitegeist\\Nodemerobis\\": "Classes/"
         }
     },
+    "scripts": {
+        "fix:style": "phpcbf --colors --standard=PSR12 Classes",
+        "test:style": "phpcs --colors -n --standard=PSR12 Classes",
+        "test:stan": "phpstan analyse -l 9 Classes",
+        "test": ["composer install","composer test:style" , "composer test:stan"]
+    },
     "extra": {
         "neos": {
             "package-key": "Sitegeist.Nodemerobis"
         }
+    },
+    "config": {
+        "allow-plugins": {
+            "neos/composer-plugin": true
+        }
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^1.8",
+        "squizlabs/php_codesniffer": "^3.7"
     }
 }

@@ -11,6 +11,6 @@ class NodeTypeLabel
 {
     public function __construct(
         public readonly string $label
-    ){
+    ) {
     }
 }
