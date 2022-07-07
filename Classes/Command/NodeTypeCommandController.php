@@ -27,7 +27,7 @@ use Flowpack\SiteKickstarter\Domain\Modification\ModificationCollection;
 /**
  * @Flow\Scope("singleton")
  */
-class KickstartCommandController extends CommandController
+class NodeTypeCommandController extends CommandController
 {
 
     /**
@@ -51,7 +51,7 @@ class KickstartCommandController extends CommandController
      * @return void
      * @throws \Neos\Flow\Cli\Exception\StopCommandException
      */
-    public function contentCommand(string $name, ?string $packageKey = null, array $super = [], array $child = [], array $prop = []): void
+    public function kickstartContentCommand(string $name, ?string $packageKey = null, array $super = [], array $child = [], array $prop = []): void
     {
         $packageKey = $this->determinePackageKey($packageKey);
 
