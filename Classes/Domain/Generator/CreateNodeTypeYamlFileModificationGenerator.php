@@ -12,9 +12,10 @@ use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\Flow\Package\FlowPackageInterface;
 use Sitegeist\Nodemerobis\Domain\Modification\CreateFileModification;
 use Sitegeist\Nodemerobis\Domain\Modification\ModificationInterface;
+use Sitegeist\Nodemerobis\Domain\Specification\NodeTypeNameSpecification;
 use Symfony\Component\Yaml\Yaml;
 
-class YamlNodeTypeModificationGenerator implements ModificationGeneratorInterface
+class CreateNodeTypeYamlFileModificationGenerator implements ModificationGeneratorInterface
 {
     public function generateModification(FlowPackageInterface $package, NodeType $nodeType): ModificationInterface
     {
@@ -25,6 +26,12 @@ class YamlNodeTypeModificationGenerator implements ModificationGeneratorInterfac
         if ($nodeType->isFinal()) {
             $configuration['final'] = true;
         }
-        return new CreateFileModification($package->getPackagePath() . '/NodeTypes/' . $nodeType->getName() . '.yaml', Yaml::dump([ $nodeType->getName() => $configuration], 99, 2));
+
+        $nodeTypeNameSpecification = NodeTypeNameSpecification::fromString($nodeType->getName());
+        $filePath = $package->getPackagePath()  . '/NodeTypes/' . implode('/', $nodeTypeNameSpecification->getLocalNameParts()) . '.yaml';
+        return new CreateFileModification(
+            $filePath,
+            Yaml::dump([ $nodeType->getName() => $configuration], 99, 2)
+        );
     }
 }

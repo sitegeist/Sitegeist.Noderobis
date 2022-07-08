@@ -24,7 +24,7 @@ use Neos\Flow\Package\PackageManager;
 use Flowpack\SiteKickstarter\Domain\Generator\Fusion\ContentFusionRendererGenerator;
 use Flowpack\SiteKickstarter\Domain\Generator\Fusion\DocumentFusionRendererGenerator;
 use Sitegeist\Nodemerobis\Domain\Generator\NodeTypeGenerator;
-use Sitegeist\Nodemerobis\Domain\Generator\YamlNodeTypeModificationGenerator;
+use Sitegeist\Nodemerobis\Domain\Generator\CreateNodeTypeYamlFileModificationGenerator;
 use Sitegeist\Nodemerobis\Domain\Modification\ModificationCollection;
 use Sitegeist\Nodemerobis\Domain\Modification\ModificationInterface;
 use Sitegeist\Nodemerobis\Domain\Specification\NodeTypeNameSpecification;
@@ -57,10 +57,10 @@ class NodeTypeCommandController extends CommandController
     protected $nodeTypeGenerator;
 
     /**
-     * @var YamlNodeTypeModificationGenerator
+     * @var CreateNodeTypeYamlFileModificationGenerator
      * @Flow\Inject
      */
-    protected $yamlNodeTypeModificationGenerator;
+    protected $createNodeTypeYamlFileModificationGenerator;
 
     /**
      * @phpstan-param string[] $super
@@ -90,7 +90,7 @@ class NodeTypeCommandController extends CommandController
         $nodeType = $this->nodeTypeGenerator->generateNodeType($nodeTypeSpecification);
 
         $modifications = new ModificationCollection(
-            $this->yamlNodeTypeModificationGenerator->generateModification($package, $nodeType)
+            $this->createNodeTypeYamlFileModificationGenerator->generateModification($package, $nodeType)
         );
 
         $this->applyModification($modifications, $force);
