@@ -20,6 +20,9 @@ class CreateNodeTypeYamlFileModificationGenerator implements ModificationGenerat
     public function generateModification(FlowPackageInterface $package, NodeType $nodeType): ModificationInterface
     {
         $configuration = $nodeType->getLocalConfiguration();
+        foreach ($nodeType->getDeclaredSuperTypes() as $declaredSuperType) {
+            $configuration['superTypes'][$declaredSuperType->getName()] = true;
+        }
         if ($nodeType->isAbstract()) {
             $configuration['abstract'] = true;
         }

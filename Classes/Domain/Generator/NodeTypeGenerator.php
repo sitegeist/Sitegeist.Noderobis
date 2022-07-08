@@ -32,7 +32,6 @@ class NodeTypeGenerator implements NodeTypeGeneratorInterface
             $superType = $this->nodeTypeManager->getNodeType($superTypeSpecification->getFullName());
             if ($superType instanceof NodeType) {
                 $superTypes[] = $superType;
-                $localConfiguration['superTypes'][$superTypeSpecification->getFullName()] = true;
             } else {
                 throw new \InvalidArgumentException(sprintf('Unknown supertype %s', $superTypeSpecification->getFullName()));
             }
