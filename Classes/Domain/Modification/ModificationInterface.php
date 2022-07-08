@@ -1,10 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Sitegeist.Noderobis package.
  */
-
-declare(strict_types=1);
 
 namespace Sitegeist\Nodemerobis\Domain\Modification;
 

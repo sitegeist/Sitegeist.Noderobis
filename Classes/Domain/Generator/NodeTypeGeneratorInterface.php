@@ -8,10 +8,10 @@ declare(strict_types=1);
 
 namespace Sitegeist\Nodemerobis\Domain\Generator;
 
-use Sitegeist\Nodemerobis\Domain\Modification\ModificationInterface;
+use Neos\ContentRepository\Domain\Model\NodeType;
 use Sitegeist\Nodemerobis\Domain\Specification\NodeTypeSpecification;
 
-interface GeneratorInterface
+interface NodeTypeGeneratorInterface
 {
-    public function generate(NodeTypeSpecification $nodeType): ModificationInterface;
+    public function generateNodeType(NodeTypeSpecification $nodeTypeSpecification): NodeType;
 }

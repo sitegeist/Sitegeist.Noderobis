@@ -23,7 +23,15 @@ use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Package\PackageManager;
 use Flowpack\SiteKickstarter\Domain\Generator\Fusion\ContentFusionRendererGenerator;
 use Flowpack\SiteKickstarter\Domain\Generator\Fusion\DocumentFusionRendererGenerator;
-use Flowpack\SiteKickstarter\Domain\Modification\ModificationCollection;
+use Sitegeist\Nodemerobis\Domain\Generator\NodeTypeGenerator;
+use Sitegeist\Nodemerobis\Domain\Generator\YamlNodeTypeModificationGenerator;
+use Sitegeist\Nodemerobis\Domain\Modification\ModificationCollection;
+use Sitegeist\Nodemerobis\Domain\Modification\ModificationInterface;
+use Sitegeist\Nodemerobis\Domain\Specification\NodeTypeNameSpecification;
+use Sitegeist\Nodemerobis\Domain\Specification\NodeTypeNameSpecificationCollection;
+use Sitegeist\Nodemerobis\Domain\Specification\NodeTypeSpecification;
+use Sitegeist\Nodemerobis\Domain\Specification\PropertySpecificationCollection;
+use Sitegeist\Nodemerobis\Domain\Specification\TetheredNodeSpecificationCollection;
 
 /**
  * @Flow\Scope("singleton")
@@ -43,6 +51,18 @@ class NodeTypeCommandController extends CommandController
     protected $defaultPackageKey;
 
     /**
+     * @var NodeTypeGenerator
+     * @Flow\Inject
+     */
+    protected $nodeTypeGenerator;
+
+    /**
+     * @var YamlNodeTypeModificationGenerator
+     * @Flow\Inject
+     */
+    protected $yamlNodeTypeModificationGenerator;
+
+    /**
      * @phpstan-param string[] $super
      * @phpstan-param string[] $child
      * @phpstan-param string[] $prop
@@ -52,43 +72,74 @@ class NodeTypeCommandController extends CommandController
      * @param array $super SuperTypes
      * @param array $child ChildNodes
      * @param array $prop Node properties
+     * @param bool $force Apply all modifications without asking confirmation for overwriting
      * @return void
      * @throws \Neos\Flow\Cli\Exception\StopCommandException
      */
-    public function kickstartContentCommand(string $name, ?string $packageKey = null, array $super = [], array $child = [], array $prop = []): void
+    public function kickstartContentCommand(string $name, ?string $packageKey = null, array $super = [], array $child = [], array $prop = [], bool $force = false): void
     {
-        $packageKey = $this->determinePackageKey($packageKey);
-
-        /**
-         * @phpstan-ignore-next-line
-         */
-        \Neos\Flow\var_dump(
-            [
-                $packageKey,
-                $name,
-                $super,
-                $child,
-                $prop
-            ]
+        $package = $this->determinePackage($packageKey);
+        $nodeTypeSpecification = new NodeTypeSpecification(
+            NodeTypeNameSpecification::fromString($package->getPackageKey() . ':Content.' . $name),
+            NodeTypeNameSpecificationCollection::fromStringArray(['Neos.Neos:Content']),
+            new PropertySpecificationCollection(),
+            new TetheredNodeSpecificationCollection(),
+            true
         );
+
+        $nodeType = $this->nodeTypeGenerator->generateNodeType($nodeTypeSpecification);
+
+        $modifications = new ModificationCollection(
+            $this->yamlNodeTypeModificationGenerator->generateModification($package, $nodeType)
+        );
+
+        $this->applyModification($modifications, $force);
     }
 
-    protected function determinePackageKey(?string $packageKey = null): string
+    protected function applyModification(ModificationInterface $modification, bool $force = false): void
+    {
+        if (!$force && $modification->isConfirmationRequired()) {
+            $this->outputLine();
+            $this->outputLine("Confirmation is required. The command will apply following modifications:");
+            $this->outputLine($modification->getDescription());
+            if ($this->output->askConfirmation("Shall we proceed (Y/n)? ") == false) {
+                $this->quit(1);
+            }
+        }
+
+        $modification->apply();
+        $this->outputLine();
+        $this->outputLine("The following modifications were applied:");
+        $this->outputLine($modification->getDescription());
+    }
+
+    protected function determinePackage(?string $packageKey = null): FlowPackageInterface
     {
         if ($packageKey !== null) {
             try {
-                $this->packageManager->getPackage($packageKey);
-                return $packageKey;
+                $package = $this->packageManager->getPackage($packageKey);
+                if ($package instanceof FlowPackageInterface) {
+                    return $package;
+                }
+                $this->outputLine('Package %s is no Flow-Package', [$packageKey]);
+                $this->quit(1);
+                die();
             } catch (UnknownPackageException) {
                 $this->outputLine('Package %s not found', [$packageKey]);
                 $this->quit(1);
                 die();
             }
         }
+
         if ($this->defaultPackageKey !== null) {
             try {
-                $this->packageManager->getPackage($this->defaultPackageKey);
-                return $this->defaultPackageKey;
+                $package = $this->packageManager->getPackage($this->defaultPackageKey);
+                if ($package instanceof FlowPackageInterface) {
+                    return $package;
+                }
+                $this->outputLine('Package %s is no Flow-Package', [$packageKey]);
+                $this->quit(1);
+                die();
             } catch (UnknownPackageException) {
                 $this->outputLine('Default Package %s not found', [$this->defaultPackageKey]);
                 $this->quit(1);
