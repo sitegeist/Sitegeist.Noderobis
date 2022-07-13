@@ -91,7 +91,7 @@ class NodeTypeGenerator implements NodeTypeGeneratorInterface
             $groupName = $nodeProperty->group?->groupName ?? null;
             if ($groupName) {
                 if ($nodeType->hasConfiguration('ui.groups.' . $groupName) == false) {
-                    $localConfiguration['ui']['groups'][$groupName] = [
+                    $localConfiguration['ui']['inspector']['groups'][$groupName] = [
                         'tab' => 'default',
                         'icon' => 'file-alt',
                         'label' => $groupName

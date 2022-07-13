@@ -83,6 +83,63 @@ class NodeTypeCommandController extends CommandController
      * @return void
      * @throws \Neos\Flow\Cli\Exception\StopCommandException
      */
+    public function kickstartDocumentCommand(string $name, ?string $packageKey = null, array $super = [], array $child = [], array $prop = [], bool $force = false): void
+    {
+        $package = $this->determinePackage($packageKey);
+
+        $nodeTypeSpecification = new NodeTypeSpecification(
+            NodeTypeNameSpecification::fromString($package->getPackageKey() . ':Document.' . $name),
+            NodeTypeNameSpecificationCollection::fromStringArray(['Neos.Neos:Document']),
+            new PropertySpecificationCollection(
+                new PropertySpecification(
+                    new PropertyNameSpecification('title'),
+                    new PropertyTypeSpecification('string'),
+                    new PropertyLabelSpecification('Titel'),
+                    new PropertyDescriptionSpecification('Der titel vons ganze'),
+                    new PropertyGroupNameSpecification('dings'),
+                    true
+                ),
+                new PropertySpecification(
+                    new PropertyNameSpecification('text'),
+                    new PropertyPresetNameSpecification('richtext'),
+                    new PropertyLabelSpecification('Text'),
+                    new PropertyDescriptionSpecification('Der text vons ganze'),
+                    new PropertyGroupNameSpecification('dings'),
+                    true
+                ),
+            ),
+            new TetheredNodeSpecificationCollection(
+                new TetheredNodeSpecification(
+                    new NodeNameSpecification('main'),
+                    NodeTypeNameSpecification::fromString('Neos.Neos:ContentCollection')
+                )
+            ),
+            false
+        );
+
+        $nodeType = $this->nodeTypeGenerator->generateNodeType($nodeTypeSpecification);
+
+        $this->applyModification(
+            $force,
+            $this->createNodeTypeYamlFileModificationGenerator->generateModification($package, $nodeType),
+            $this->createFusionRendererModificationGenerator->generateModification($package, $nodeType)
+        );
+    }
+
+    /**
+     * @phpstan-param string[] $super
+     * @phpstan-param string[] $child
+     * @phpstan-param string[] $prop
+     *
+     * @param string $name Node Name, last part of NodeType
+     * @param string $packageKey (optional) Package, uses fallback from configuration
+     * @param array $super SuperTypes
+     * @param array $child ChildNodes
+     * @param array $prop Node properties
+     * @param bool $force Apply all modifications without asking confirmation for overwriting
+     * @return void
+     * @throws \Neos\Flow\Cli\Exception\StopCommandException
+     */
     public function kickstartContentCommand(string $name, ?string $packageKey = null, array $super = [], array $child = [], array $prop = [], bool $force = false): void
     {
         $package = $this->determinePackage($packageKey);
@@ -114,7 +171,7 @@ class NodeTypeCommandController extends CommandController
                     NodeTypeNameSpecification::fromString('Neos.Neos:ContentCollection')
                 )
             ),
-            true
+            false
         );
 
         $nodeType = $this->nodeTypeGenerator->generateNodeType($nodeTypeSpecification);
