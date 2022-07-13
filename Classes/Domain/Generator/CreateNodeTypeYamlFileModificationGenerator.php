@@ -19,7 +19,7 @@ class CreateNodeTypeYamlFileModificationGenerator implements ModificationGenerat
 {
     public function generateModification(FlowPackageInterface $package, NodeType $nodeType): ModificationInterface
     {
-        $configuration = $nodeType->getLocalConfiguration();
+        $configuration = [];
         foreach ($nodeType->getDeclaredSuperTypes() as $declaredSuperType) {
             $configuration['superTypes'][$declaredSuperType->getName()] = true;
         }
@@ -29,6 +29,8 @@ class CreateNodeTypeYamlFileModificationGenerator implements ModificationGenerat
         if ($nodeType->isFinal()) {
             $configuration['final'] = true;
         }
+
+        $configuration = array_merge($configuration, $nodeType->getLocalConfiguration());
 
         $nodeTypeNameSpecification = NodeTypeNameSpecification::fromString($nodeType->getName());
         $filePath = $package->getPackagePath()  . '/NodeTypes/' . implode('/', $nodeTypeNameSpecification->getLocalNameParts()) . '.yaml';

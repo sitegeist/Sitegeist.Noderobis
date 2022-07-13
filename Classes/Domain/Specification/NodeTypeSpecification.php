@@ -15,7 +15,7 @@ class NodeTypeSpecification
         public readonly PropertySpecificationCollection $nodeProperties,
         public readonly TetheredNodeSpecificationCollection $tetheredNodes,
         public readonly bool $abstract,
-        public readonly ?NodeTypeLabel $label = null
+        public readonly ?NodeTypeLabelSpecification $label = null
     ) {
     }
 }

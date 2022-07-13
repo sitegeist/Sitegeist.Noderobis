@@ -7,7 +7,7 @@ namespace Sitegeist\Nodemerobis\Domain\Specification;
 use Neos\Flow\Annotations as Flow;
 
 #[Flow\Proxy(false)]
-class PropertyDescription
+class PropertyDescriptionSpecification
 {
     public function __construct(
         public readonly string $description

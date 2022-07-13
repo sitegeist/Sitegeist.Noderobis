@@ -7,10 +7,10 @@ namespace Sitegeist\Nodemerobis\Domain\Specification;
 use Neos\Flow\Annotations as Flow;
 
 #[Flow\Proxy(false)]
-class PropertyLabel
+class PropertyPresetNameSpecification
 {
     public function __construct(
-        public readonly string $label
+        public readonly string $presetName
     ) {
     }
 }

@@ -7,10 +7,10 @@ namespace Sitegeist\Nodemerobis\Domain\Specification;
 use Neos\Flow\Annotations as Flow;
 
 #[Flow\Proxy(false)]
-class NodeTypeLabel
+class NodeNameSpecification
 {
     public function __construct(
-        public readonly string $label
+        public readonly string $name
     ) {
     }
 }
