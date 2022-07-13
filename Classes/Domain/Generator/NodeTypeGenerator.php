@@ -53,11 +53,11 @@ class NodeTypeGenerator implements NodeTypeGeneratorInterface
         }
 
         foreach ($nodeTypeSpecification->nodeProperties as $nodeProperty) {
-            /** @var $nodeProperty PropertySpecification */
+            /** @var PropertySpecification $nodeProperty  */
             $propertyConfiguration = [];
             if ($nodeProperty->typeOrPreset instanceof PropertyTypeSpecification) {
                 $propertyConfiguration['type'] = $nodeProperty->typeOrPreset->type;
-            } elseif  ($nodeProperty->typeOrPreset instanceof PropertyPresetNameSpecification) {
+            } elseif ($nodeProperty->typeOrPreset instanceof PropertyPresetNameSpecification) {
                 $propertyConfiguration['options']['preset'] = $nodeProperty->typeOrPreset->presetName;
             }
 
@@ -79,7 +79,7 @@ class NodeTypeGenerator implements NodeTypeGeneratorInterface
         }
 
         foreach ($nodeTypeSpecification->tetheredNodes as $tetheredNode) {
-            /** @var $tetheredNode TetheredNodeSpecification */
+            /** @var TetheredNodeSpecification $tetheredNode */
             $localConfiguration['childNodes'][$tetheredNode->name->name] = ['type' => $tetheredNode->type->getFullName()];
         }
 
@@ -87,7 +87,7 @@ class NodeTypeGenerator implements NodeTypeGeneratorInterface
 
         # add missing groups
         foreach ($nodeTypeSpecification->nodeProperties as $nodeProperty) {
-            /** @var $nodeProperty PropertySpecification */
+            /** @var PropertySpecification $nodeProperty */
             $groupName = $nodeProperty->group?->groupName ?? null;
             if ($groupName) {
                 if ($nodeType->hasConfiguration('ui.groups.' . $groupName) == false) {

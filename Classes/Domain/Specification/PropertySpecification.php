@@ -10,12 +10,12 @@ use Neos\Flow\Annotations as Flow;
 class PropertySpecification
 {
     public function __construct(
-        public readonly PropertyNameSpecification                                 $name,
+        public readonly PropertyNameSpecification $name,
         public readonly PropertyTypeSpecification|PropertyPresetNameSpecification $typeOrPreset,
-        public readonly ?PropertyLabelSpecification                               $label = null,
-        public readonly ?PropertyDescriptionSpecification                         $description = null,
-        public readonly ?PropertyGroupNameSpecification                           $group = null,
-        public readonly bool                                                      $isRequired = false
+        public readonly ?PropertyLabelSpecification $label = null,
+        public readonly ?PropertyDescriptionSpecification $description = null,
+        public readonly ?PropertyGroupNameSpecification $group = null,
+        public readonly bool $isRequired = false
     ) {
     }
 }

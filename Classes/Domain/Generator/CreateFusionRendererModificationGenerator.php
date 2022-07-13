@@ -57,7 +57,6 @@ class CreateFusionRendererModificationGenerator implements ModificationGenerator
     {
         $resultParts = [];
         foreach ($nodeType->getProperties() as $name => $propertyConfiguration) {
-
             if (str_starts_with($name, '_')) {
                 continue;
             }
@@ -80,7 +79,7 @@ class CreateFusionRendererModificationGenerator implements ModificationGenerator
                 EOT;
         }
         if (count($resultParts) > 0) {
-            return 'Properties:<br/>' . PHP_EOL .  ' <dl>' . PHP_EOL . implode(PHP_EOL, $resultParts) . PHP_EOL .'</dl>';
+            return 'Properties:<br/>' . PHP_EOL .  ' <dl>' . PHP_EOL . implode(PHP_EOL, $resultParts) . PHP_EOL . '</dl>';
         }
         return '';
     }
@@ -89,15 +88,14 @@ class CreateFusionRendererModificationGenerator implements ModificationGenerator
     {
         $resultParts = [];
         foreach ($nodeType->getAutoCreatedChildNodes() as $name => $childNodeType) {
-            $name = $property['label'] ?? $name;
-
             if ($childNodeType->isOfType('Neos.Neos:Document')) {
-                // we do not render document children ...maybe render a link
-                continue;
+                $renderer = '<Neos.Neos:NodeLink node={q(node).children(' . $name . ')} >' . $name . '</Neos.Neos:NodeLink>';
             } elseif ($childNodeType->isOfType('Neos.Neos:ContentCollection')) {
                 $renderer = '<Neos.Neos:ContentCollection nodePath="' . $name . '" />';
             } elseif ($childNodeType->isOfType('Neos.Neos:Content')) {
                 $renderer = '<Neos.Neos:ContentCase @context.node={q(node).children(' . $name . ')} />';
+            } else {
+                $renderer = '<!-- no clue how to render node of type ' . $childNodeType->getName() . ' -->';
             }
 
             $resultParts[] = <<<EOT
@@ -110,17 +108,17 @@ class CreateFusionRendererModificationGenerator implements ModificationGenerator
                 EOT;
         }
         if (count($resultParts) > 0) {
-            return 'ChildNodes:<br/>' . PHP_EOL . '<dl>' . PHP_EOL . implode(PHP_EOL, $resultParts) . PHP_EOL .'</dl>';
+            return 'ChildNodes:<br/>' . PHP_EOL . '<dl>' . PHP_EOL . implode(PHP_EOL, $resultParts) . PHP_EOL . '</dl>';
         }
         return '';
     }
 
-    protected function indent($text, $numSpaces = 4):string
+    protected function indent(string $text, int $numSpaces = 4): string
     {
         $padding = '';
-        for ($i=0; $i<$numSpaces; $i++) {
+        for ($i = 0; $i < $numSpaces; $i++) {
             $padding .= ' ';
         }
-        return implode(PHP_EOL. $padding, explode(PHP_EOL, $text));
+        return implode(PHP_EOL . $padding, explode(PHP_EOL, $text));
     }
 }

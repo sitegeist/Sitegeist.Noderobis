@@ -126,7 +126,7 @@ class NodeTypeCommandController extends CommandController
         );
     }
 
-    protected function applyModification(bool $force = false, ModificationInterface ... $modifications): void
+    protected function applyModification(bool $force = false, ModificationInterface ...$modifications): void
     {
         $collection = new ModificationCollection(... $modifications);
 
