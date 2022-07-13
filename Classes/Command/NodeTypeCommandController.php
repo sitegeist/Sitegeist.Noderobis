@@ -14,6 +14,7 @@ use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Package\Exception\UnknownPackageException;
 use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Package\PackageManager;
+use Sitegeist\Nodemerobis\Domain\Generator\CreateFusionRendererModificationGenerator;
 use Sitegeist\Nodemerobis\Domain\Generator\NodeTypeGenerator;
 use Sitegeist\Nodemerobis\Domain\Generator\CreateNodeTypeYamlFileModificationGenerator;
 use Sitegeist\Nodemerobis\Domain\Modification\ModificationCollection;
@@ -26,6 +27,7 @@ use Sitegeist\Nodemerobis\Domain\Specification\PropertyDescriptionSpecification;
 use Sitegeist\Nodemerobis\Domain\Specification\PropertyGroupNameSpecification;
 use Sitegeist\Nodemerobis\Domain\Specification\PropertyLabelSpecification;
 use Sitegeist\Nodemerobis\Domain\Specification\PropertyNameSpecification;
+use Sitegeist\Nodemerobis\Domain\Specification\PropertyPresetNameSpecification;
 use Sitegeist\Nodemerobis\Domain\Specification\PropertySpecification;
 use Sitegeist\Nodemerobis\Domain\Specification\PropertySpecificationCollection;
 use Sitegeist\Nodemerobis\Domain\Specification\PropertyTypeSpecification;
@@ -62,6 +64,12 @@ class NodeTypeCommandController extends CommandController
     protected $createNodeTypeYamlFileModificationGenerator;
 
     /**
+     * @var CreateFusionRendererModificationGenerator
+     * @Flow\Inject
+     */
+    protected $createFusionRendererModificationGenerator;
+
+    /**
      * @phpstan-param string[] $super
      * @phpstan-param string[] $child
      * @phpstan-param string[] $prop
@@ -93,7 +101,7 @@ class NodeTypeCommandController extends CommandController
                 ),
                 new PropertySpecification(
                     new PropertyNameSpecification('text'),
-                    new PropertyTypeSpecification('string'),
+                    new PropertyPresetNameSpecification('richtext'),
                     new PropertyLabelSpecification('Text'),
                     new PropertyDescriptionSpecification('Der text vons ganze'),
                     new PropertyGroupNameSpecification('dings'),
@@ -113,7 +121,8 @@ class NodeTypeCommandController extends CommandController
 
         $this->applyModification(
             $force,
-            $this->createNodeTypeYamlFileModificationGenerator->generateModification($package, $nodeType)
+            $this->createNodeTypeYamlFileModificationGenerator->generateModification($package, $nodeType),
+            $this->createFusionRendererModificationGenerator->generateModification($package, $nodeType)
         );
     }
 

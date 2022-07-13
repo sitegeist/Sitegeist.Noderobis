@@ -31,7 +31,7 @@ class NodeTypeGenerator implements NodeTypeGeneratorInterface
     {
         $localConfiguration = [
             'ui' => [],
-            'children' => [],
+            'childNodes' => [],
             'properties' => []
         ];
 
@@ -80,7 +80,7 @@ class NodeTypeGenerator implements NodeTypeGeneratorInterface
 
         foreach ($nodeTypeSpecification->tetheredNodes as $tetheredNode) {
             /** @var $tetheredNode TetheredNodeSpecification */
-            $localConfiguration['children'][$tetheredNode->name->name] = ['type' => $tetheredNode->type->getFullName()];
+            $localConfiguration['childNodes'][$tetheredNode->name->name] = ['type' => $tetheredNode->type->getFullName()];
         }
 
         $nodeType = new NodeType($nodeTypeSpecification->name->getFullName(), $superTypes, $localConfiguration);

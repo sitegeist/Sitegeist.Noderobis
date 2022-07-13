@@ -19,6 +19,15 @@ class CreateNodeTypeYamlFileModificationGenerator implements ModificationGenerat
 {
     public function generateModification(FlowPackageInterface $package, NodeType $nodeType): ModificationInterface
     {
+        $nodeTypeComment = <<<EOT
+            #
+            # Definition of NodeType {$nodeType->getName()}
+            #
+            # @see https://docs.neos.io/cms/manual/content-repository/nodetype-definition
+            # @see https://docs.neos.io/cms/manual/content-repository/nodetype-properties
+            #
+            EOT;
+
         $configuration = [];
         foreach ($nodeType->getDeclaredSuperTypes() as $declaredSuperType) {
             $configuration['superTypes'][$declaredSuperType->getName()] = true;
@@ -33,10 +42,10 @@ class CreateNodeTypeYamlFileModificationGenerator implements ModificationGenerat
         $configuration = array_merge($configuration, $nodeType->getLocalConfiguration());
 
         $nodeTypeNameSpecification = NodeTypeNameSpecification::fromString($nodeType->getName());
-        $filePath = $package->getPackagePath()  . '/NodeTypes/' . implode('/', $nodeTypeNameSpecification->getLocalNameParts()) . '.yaml';
+        $filePath = $package->getPackagePath()  . 'NodeTypes/' . implode('/', $nodeTypeNameSpecification->getLocalNameParts()) . '.yaml';
         return new CreateFileModification(
             $filePath,
-            Yaml::dump([ $nodeType->getName() => $configuration], 99, 2)
+            $nodeTypeComment . chr(10) . Yaml::dump([ $nodeType->getName() => $configuration], 99, 2)
         );
     }
 }
