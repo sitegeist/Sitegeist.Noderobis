@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Sitegeist\Nodemerobis\Domain\Specification;
 
+use Flowpack\SiteKickstarter\Domain\Specification\NameSpecification;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -20,6 +21,11 @@ class NodeTypeNameSpecificationCollection implements \IteratorAggregate
     public function __construct(NodeTypeNameSpecification ...$nameSpecifications)
     {
         $this->nameSpecifications = $nameSpecifications;
+    }
+
+    public function withNodeTypeName(NodeTypeNameSpecification $nameSpecification): self
+    {
+        return new self(...[...$this->nameSpecifications, $nameSpecification]);
     }
 
     /**
@@ -48,5 +54,18 @@ class NodeTypeNameSpecificationCollection implements \IteratorAggregate
     public function isEmpty(): bool
     {
         return empty($this->nameSpecifications);
+    }
+
+    public function __toString(): string
+    {
+        return implode(
+            ', ',
+            array_map(
+                function (NodeTypeNameSpecification $nameSpecification) {
+                    return (string)$nameSpecification;
+                },
+                $this->nameSpecifications
+            )
+        );
     }
 }

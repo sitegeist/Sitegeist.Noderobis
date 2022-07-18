@@ -11,8 +11,8 @@ namespace Sitegeist\Nodemerobis\Domain\Generator;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
-use Neos\Flow\Mvc\Routing\Exception\InvalidControllerException;
 use Sitegeist\Nodemerobis\Domain\Specification\NodeTypeNameSpecification;
+use Sitegeist\Nodemerobis\Domain\Specification\TetheredNodePresetNameSpecification;
 use Sitegeist\Nodemerobis\Domain\Specification\NodeTypeSpecification;
 use Sitegeist\Nodemerobis\Domain\Specification\PropertyPresetNameSpecification;
 use Sitegeist\Nodemerobis\Domain\Specification\PropertySpecification;
@@ -55,13 +55,14 @@ class NodeTypeGenerator implements NodeTypeGeneratorInterface
         foreach ($nodeTypeSpecification->nodeProperties as $nodeProperty) {
             /** @var PropertySpecification $nodeProperty  */
             $propertyConfiguration = [];
-            if ($nodeProperty->typeOrPreset instanceof PropertyTypeSpecification) {
-                $propertyConfiguration['type'] = $nodeProperty->typeOrPreset->type;
-            } elseif ($nodeProperty->typeOrPreset instanceof PropertyPresetNameSpecification) {
-                $propertyConfiguration['options']['preset'] = $nodeProperty->typeOrPreset->presetName;
+            $typeOrPreset = $nodeProperty->typeOrPreset;
+            if ($typeOrPreset instanceof PropertyTypeSpecification) {
+                $propertyConfiguration['type'] = $typeOrPreset->type;
+            } elseif ($typeOrPreset instanceof PropertyPresetNameSpecification) {
+                $propertyConfiguration['options']['preset'] = $typeOrPreset->presetName;
             }
 
-            $propertyConfiguration['ui']['label'] = $nodeProperty->label?->label ?? $nodeProperty->name;
+            $propertyConfiguration['ui']['label'] = $nodeProperty->label?->label ?? $nodeProperty->name->name;
 
             if ($nodeProperty->group) {
                 $propertyConfiguration['ui']['inspector']['group'] = $nodeProperty->group->groupName;
@@ -79,8 +80,14 @@ class NodeTypeGenerator implements NodeTypeGeneratorInterface
         }
 
         foreach ($nodeTypeSpecification->tetheredNodes as $tetheredNode) {
+
             /** @var TetheredNodeSpecification $tetheredNode */
-            $localConfiguration['childNodes'][$tetheredNode->name->name] = ['type' => $tetheredNode->type->getFullName()];
+            $typeOrPreset = $tetheredNode->typeOrPreset;
+            if ($typeOrPreset instanceof NodeTypeNameSpecification) {
+                $localConfiguration['childNodes'][$tetheredNode->name->name] = ['type' => $typeOrPreset->getFullName()];
+            } elseif ($typeOrPreset instanceof TetheredNodePresetNameSpecification) {
+                $localConfiguration['childNodes'][$tetheredNode->name->name] = ['preset' => $typeOrPreset->presetName];
+            }
         }
 
         $nodeType = new NodeType($nodeTypeSpecification->name->getFullName(), $superTypes, $localConfiguration);

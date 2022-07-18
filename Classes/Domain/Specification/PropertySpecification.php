@@ -18,4 +18,9 @@ class PropertySpecification
         public readonly bool $isRequired = false
     ) {
     }
+
+    public function __toString(): string
+    {
+        return $this->name->name . '(' . $this->typeOrPreset . ')';
+    }
 }

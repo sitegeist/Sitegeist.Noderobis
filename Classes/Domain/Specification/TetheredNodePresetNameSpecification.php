@@ -7,15 +7,15 @@ namespace Sitegeist\Nodemerobis\Domain\Specification;
 use Neos\Flow\Annotations as Flow;
 
 #[Flow\Proxy(false)]
-class PropertyTypeSpecification
+class TetheredNodePresetNameSpecification
 {
     public function __construct(
-        public readonly string $type
+        public readonly string $presetName
     ) {
     }
 
     public function __toString(): string
     {
-        return 'type:' . $this->type;
+        return 'preset:' . $this->presetName;
     }
 }

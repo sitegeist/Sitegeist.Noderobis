@@ -22,6 +22,11 @@ class PropertySpecificationCollection implements \IteratorAggregate
         $this->nodeProperties = $nodeProperties;
     }
 
+    public function withProperty(PropertySpecification $property): self
+    {
+        return new self(...[...$this->nodeProperties, $property]);
+    }
+
     public function isEmpty(): bool
     {
         return empty($this->nodeProperties);
@@ -33,5 +38,18 @@ class PropertySpecificationCollection implements \IteratorAggregate
     public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->nodeProperties);
+    }
+
+    public function __toString(): string
+    {
+        return implode(
+            ', ',
+            array_map(
+                function (PropertySpecification $nodeProperty) {
+                        return (string)$nodeProperty;
+                },
+                $this->nodeProperties
+            )
+        );
     }
 }

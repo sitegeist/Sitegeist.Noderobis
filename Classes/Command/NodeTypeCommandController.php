@@ -19,8 +19,9 @@ use Sitegeist\Nodemerobis\Domain\Generator\NodeTypeGenerator;
 use Sitegeist\Nodemerobis\Domain\Generator\CreateNodeTypeYamlFileModificationGenerator;
 use Sitegeist\Nodemerobis\Domain\Modification\ModificationCollection;
 use Sitegeist\Nodemerobis\Domain\Modification\ModificationInterface;
-use Sitegeist\Nodemerobis\Domain\Specification\NodeNameSpecification;
+use Sitegeist\Nodemerobis\Domain\Specification\TetheredNodeNameSpecification;
 use Sitegeist\Nodemerobis\Domain\Specification\NodeTypeNameSpecification;
+use Sitegeist\Nodemerobis\Domain\Specification\PropertySpecificationFactory;
 use Sitegeist\Nodemerobis\Domain\Specification\NodeTypeNameSpecificationCollection;
 use Sitegeist\Nodemerobis\Domain\Specification\NodeTypeSpecification;
 use Sitegeist\Nodemerobis\Domain\Specification\PropertyDescriptionSpecification;
@@ -33,6 +34,7 @@ use Sitegeist\Nodemerobis\Domain\Specification\PropertySpecificationCollection;
 use Sitegeist\Nodemerobis\Domain\Specification\PropertyTypeSpecification;
 use Sitegeist\Nodemerobis\Domain\Specification\TetheredNodeSpecification;
 use Sitegeist\Nodemerobis\Domain\Specification\TetheredNodeSpecificationCollection;
+use Sitegeist\Nodemerobis\Domain\Specification\TetheredNodeSpecificationFactory;
 
 /**
  * @Flow\Scope("singleton")
@@ -58,6 +60,18 @@ class NodeTypeCommandController extends CommandController
     protected $nodeTypeGenerator;
 
     /**
+     * @var PropertySpecificationFactory
+     * @Flow\Inject
+     */
+    protected $propertySpecificationFactory;
+
+    /**
+     * @var TetheredNodeSpecificationFactory
+     * @Flow\Inject
+     */
+    protected $tetheredNodeSpecificationFactory;
+
+    /**
      * @var CreateNodeTypeYamlFileModificationGenerator
      * @Flow\Inject
      */
@@ -70,124 +84,120 @@ class NodeTypeCommandController extends CommandController
     protected $createFusionRendererModificationGenerator;
 
     /**
-     * @phpstan-param string[] $super
-     * @phpstan-param string[] $child
-     * @phpstan-param string[] $prop
-     *
      * @param string $name Node Name, last part of NodeType
      * @param string $packageKey (optional) Package, uses fallback from configuration
-     * @param array $super SuperTypes
-     * @param array $child ChildNodes
-     * @param array $prop Node properties
-     * @param bool $force Apply all modifications without asking confirmation for overwriting
      * @return void
      * @throws \Neos\Flow\Cli\Exception\StopCommandException
      */
-    public function kickstartDocumentCommand(string $name, ?string $packageKey = null, array $super = [], array $child = [], array $prop = [], bool $force = false): void
+    public function kickstartDocumentCommand(string $name, ?string $packageKey = null): void
     {
         $package = $this->determinePackage($packageKey);
 
         $nodeTypeSpecification = new NodeTypeSpecification(
             NodeTypeNameSpecification::fromString($package->getPackageKey() . ':Document.' . $name),
             NodeTypeNameSpecificationCollection::fromStringArray(['Neos.Neos:Document']),
-            new PropertySpecificationCollection(
-                new PropertySpecification(
-                    new PropertyNameSpecification('title'),
-                    new PropertyTypeSpecification('string'),
-                    new PropertyLabelSpecification('Titel'),
-                    new PropertyDescriptionSpecification('Der titel vons ganze'),
-                    new PropertyGroupNameSpecification('dings'),
-                    true
-                ),
-                new PropertySpecification(
-                    new PropertyNameSpecification('text'),
-                    new PropertyPresetNameSpecification('richtext'),
-                    new PropertyLabelSpecification('Text'),
-                    new PropertyDescriptionSpecification('Der text vons ganze'),
-                    new PropertyGroupNameSpecification('dings'),
-                    true
-                ),
-            ),
-            new TetheredNodeSpecificationCollection(
-                new TetheredNodeSpecification(
-                    new NodeNameSpecification('main'),
-                    NodeTypeNameSpecification::fromString('Neos.Neos:ContentCollection')
-                )
-            ),
+            new PropertySpecificationCollection(),
+            new TetheredNodeSpecificationCollection(),
             false
         );
 
-        $nodeType = $this->nodeTypeGenerator->generateNodeType($nodeTypeSpecification);
-
-        $this->applyModification(
-            $force,
-            $this->createNodeTypeYamlFileModificationGenerator->generateModification($package, $nodeType),
-            $this->createFusionRendererModificationGenerator->generateModification($package, $nodeType)
-        );
+        $nodeTypeSpecification = $this->refineNodeTypeSpecification($nodeTypeSpecification);
+        $this->generateNodeTypeFromSpecification($nodeTypeSpecification, $package);
     }
 
     /**
-     * @phpstan-param string[] $super
-     * @phpstan-param string[] $child
-     * @phpstan-param string[] $prop
-     *
      * @param string $name Node Name, last part of NodeType
      * @param string $packageKey (optional) Package, uses fallback from configuration
-     * @param array $super SuperTypes
-     * @param array $child ChildNodes
-     * @param array $prop Node properties
-     * @param bool $force Apply all modifications without asking confirmation for overwriting
      * @return void
      * @throws \Neos\Flow\Cli\Exception\StopCommandException
      */
-    public function kickstartContentCommand(string $name, ?string $packageKey = null, array $super = [], array $child = [], array $prop = [], bool $force = false): void
+    public function kickstartContentCommand(string $name, ?string $packageKey = null): void
     {
         $package = $this->determinePackage($packageKey);
 
         $nodeTypeSpecification = new NodeTypeSpecification(
             NodeTypeNameSpecification::fromString($package->getPackageKey() . ':Content.' . $name),
             NodeTypeNameSpecificationCollection::fromStringArray(['Neos.Neos:Content']),
-            new PropertySpecificationCollection(
-                new PropertySpecification(
-                    new PropertyNameSpecification('title'),
-                    new PropertyTypeSpecification('string'),
-                    new PropertyLabelSpecification('Titel'),
-                    new PropertyDescriptionSpecification('Der titel vons ganze'),
-                    new PropertyGroupNameSpecification('dings'),
-                    true
-                ),
-                new PropertySpecification(
-                    new PropertyNameSpecification('text'),
-                    new PropertyPresetNameSpecification('richtext'),
-                    new PropertyLabelSpecification('Text'),
-                    new PropertyDescriptionSpecification('Der text vons ganze'),
-                    new PropertyGroupNameSpecification('dings'),
-                    true
-                ),
-            ),
-            new TetheredNodeSpecificationCollection(
-                new TetheredNodeSpecification(
-                    new NodeNameSpecification('main'),
-                    NodeTypeNameSpecification::fromString('Neos.Neos:ContentCollection')
-                )
-            ),
+            new PropertySpecificationCollection(),
+            new TetheredNodeSpecificationCollection(),
             false
         );
 
-        $nodeType = $this->nodeTypeGenerator->generateNodeType($nodeTypeSpecification);
-
-        $this->applyModification(
-            $force,
-            $this->createNodeTypeYamlFileModificationGenerator->generateModification($package, $nodeType),
-            $this->createFusionRendererModificationGenerator->generateModification($package, $nodeType)
-        );
+        $nodeTypeSpecification = $this->refineNodeTypeSpecification($nodeTypeSpecification);
+        $this->generateNodeTypeFromSpecification($nodeTypeSpecification, $package);
     }
 
-    protected function applyModification(bool $force = false, ModificationInterface ...$modifications): void
+    protected function refineNodeTypeSpecification(NodeTypeSpecification $nodeTypeSpecification): NodeTypeSpecification
+    {
+        $this->outputLine();
+        $this->outputLine((string)$nodeTypeSpecification);
+        $this->outputLine();
+
+        $choice = $this->output->select(
+            "Anything left to do?",
+            [
+                "addProperty",
+                "addChildnode",
+                "done"
+            ],
+            "done"
+        );
+
+        switch ($choice) {
+            case "addProperty":
+                $nodeTypeSpecification = $this->addPropertyToNodeTypeSpecification($nodeTypeSpecification);
+                return $this->refineNodeTypeSpecification($nodeTypeSpecification);
+            case "addChildnode":
+                $nodeTypeSpecification = $this->addTetheredNodeToNodeTypeSpecification($nodeTypeSpecification);
+                return $this->refineNodeTypeSpecification($nodeTypeSpecification);
+            case "done":
+                return $nodeTypeSpecification;
+            default:
+                $this->outputLine("Unkonwn option %s", [$choice]);
+                $this->quit(1);
+                die();
+        }
+    }
+
+    protected function addTetheredNodeToNodeTypeSpecification(NodeTypeSpecification $nodeTypeSpecification): NodeTypeSpecification
+    {
+        $name = $this->output->ask("ChildNode name: ");
+        $type = $this->output->select("ChildNode type: ", $this->tetheredNodeSpecificationFactory->getTypeConfiguration());
+
+        if (!is_string($name) || !is_string($type)) {
+            return $nodeTypeSpecification;
+        }
+
+        $tetheredNode = $this->tetheredNodeSpecificationFactory->generateTetheredNodeSpecificationFromCliInput(
+            trim($name),
+            $type
+        );
+
+        return $nodeTypeSpecification->withTeheredNode($tetheredNode);
+    }
+
+    protected function addPropertyToNodeTypeSpecification(NodeTypeSpecification $nodeTypeSpecification): NodeTypeSpecification
+    {
+        $name = $this->output->ask("Property name: ");
+        $type = $this->output->select("Property type: ", $this->propertySpecificationFactory->getTypeConfiguration());
+
+        if (!is_string($name) || !is_string($type)) {
+            return $nodeTypeSpecification;
+        }
+
+        $propertySpecification = $this->propertySpecificationFactory->generatePropertySpecificationFromCliInput(
+            trim($name),
+            $type
+        );
+
+        return $nodeTypeSpecification->withProperty($propertySpecification);
+    }
+
+    protected function applyModification(ModificationInterface ...$modifications): void
     {
         $collection = new ModificationCollection(... $modifications);
 
-        if (!$force && $collection->isConfirmationRequired()) {
+        if ($collection->isConfirmationRequired()) {
             $this->outputLine();
             $this->outputLine("Confirmation is required. The command will apply following modifications:");
             $this->outputLine($collection->getDescription());
@@ -238,5 +248,20 @@ class NodeTypeCommandController extends CommandController
         $this->outputLine('No packageKey or default specified');
         $this->quit(1);
         die();
+    }
+
+    /**
+     * @param NodeTypeSpecification $nodeTypeSpecification
+     * @param FlowPackageInterface $package
+     * @return void
+     */
+    protected function generateNodeTypeFromSpecification(NodeTypeSpecification $nodeTypeSpecification, FlowPackageInterface $package): void
+    {
+        $nodeType = $this->nodeTypeGenerator->generateNodeType($nodeTypeSpecification);
+
+        $this->applyModification(
+            $this->createNodeTypeYamlFileModificationGenerator->generateModification($package, $nodeType),
+            $this->createFusionRendererModificationGenerator->generateModification($package, $nodeType)
+        );
     }
 }

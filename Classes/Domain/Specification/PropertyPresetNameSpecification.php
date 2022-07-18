@@ -13,4 +13,9 @@ class PropertyPresetNameSpecification
         public readonly string $presetName
     ) {
     }
+
+    public function __toString(): string
+    {
+        return 'preset:' . $this->presetName;
+    }
 }

@@ -7,7 +7,7 @@ namespace Sitegeist\Nodemerobis\Domain\Specification;
 use Neos\Flow\Annotations as Flow;
 
 #[Flow\Proxy(false)]
-class NodeNameSpecification
+class TetheredNodeNameSpecification
 {
     public function __construct(
         public readonly string $name

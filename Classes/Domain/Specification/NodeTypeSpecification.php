@@ -18,4 +18,56 @@ class NodeTypeSpecification
         public readonly ?NodeTypeLabelSpecification $label = null
     ) {
     }
+
+    public function withSuperType(NodeTypeNameSpecification $nodeTypeName): self
+    {
+        return new self(
+            $this->name,
+            $this->superTypes->withNodeTypeName($nodeTypeName),
+            $this->nodeProperties,
+            $this->tetheredNodes,
+            $this->abstract,
+            $this->label
+        );
+    }
+
+    public function withProperty(PropertySpecification $property): self
+    {
+        return new self(
+            $this->name,
+            $this->superTypes,
+            $this->nodeProperties->withProperty($property),
+            $this->tetheredNodes,
+            $this->abstract,
+            $this->label
+        );
+    }
+
+    public function withTeheredNode(TetheredNodeSpecification $tetheredNode): self
+    {
+        return new self(
+            $this->name,
+            $this->superTypes,
+            $this->nodeProperties,
+            $this->tetheredNodes->withTetheredNode($tetheredNode),
+            $this->abstract,
+            $this->label
+        );
+    }
+
+    public function __toString(): string
+    {
+        $lines = [];
+        $lines[] = $this->name->__toString();
+        if (!$this->superTypes->isEmpty()) {
+            $lines[] = "  SuperTypes: " . $this->superTypes->__toString();
+        }
+        if (!$this->tetheredNodes->isEmpty()) {
+            $lines[] = "  ChildNodes: " . $this->tetheredNodes->__toString();
+        }
+        if (!$this->nodeProperties->isEmpty()) {
+            $lines[] = "  Properties: " . $this->nodeProperties->__toString();
+        }
+        return implode(PHP_EOL, $lines);
+    }
 }

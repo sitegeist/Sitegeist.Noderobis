@@ -44,4 +44,9 @@ class NodeTypeNameSpecification
 
         return $localNameParts[array_key_last($localNameParts)];
     }
+
+    public function __toString(): string
+    {
+        return $this->getFullName();
+    }
 }

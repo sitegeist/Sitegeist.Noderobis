@@ -10,8 +10,13 @@ use Neos\Flow\Annotations as Flow;
 class TetheredNodeSpecification
 {
     public function __construct(
-        public readonly NodeNameSpecification $name,
-        public readonly NodeTypeNameSpecification $type
+        public readonly TetheredNodeNameSpecification $name,
+        public readonly NodeTypeNameSpecification|TetheredNodePresetNameSpecification $typeOrPreset
     ) {
+    }
+
+    public function __toString(): string
+    {
+        return $this->name->name . '(' . $this->typeOrPreset . ')';
     }
 }

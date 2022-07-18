@@ -22,6 +22,12 @@ class TetheredNodeSpecificationCollection implements \IteratorAggregate
         $this->tetheredNodes = $tetheredNodes;
     }
 
+    public function withTetheredNode(TetheredNodeSpecification $tetheredNode): self
+    {
+        return new self(...[...$this->tetheredNodes, $tetheredNode]);
+    }
+
+
     public function isEmpty(): bool
     {
         return empty($this->tetheredNodes);
@@ -33,5 +39,18 @@ class TetheredNodeSpecificationCollection implements \IteratorAggregate
     public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->tetheredNodes);
+    }
+
+    public function __toString(): string
+    {
+        return implode(
+            ', ',
+            array_map(
+                function (TetheredNodeSpecification $tetheredNode) {
+                    return $tetheredNode->__toString();
+                },
+                $this->tetheredNodes
+            )
+        );
     }
 }
