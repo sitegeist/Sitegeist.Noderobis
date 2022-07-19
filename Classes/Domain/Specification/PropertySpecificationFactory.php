@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Sitegeist\Nodemerobis\Domain\Specification;
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Utility\Arrays;
 
 class PropertySpecificationFactory
 {
@@ -27,7 +28,8 @@ class PropertySpecificationFactory
             $typeOrPreset = new PropertyTypeSpecification($type);
         } elseif (str_starts_with($type, "preset:") && is_array($this->presetConfiguration)) {
             $preset = substr($type, 7);
-            if (array_key_exists($preset, $this->presetConfiguration)) {
+            $presetConfiguration = Arrays::getValueByPath($this->presetConfiguration, $preset);
+            if (is_array($presetConfiguration) && array_key_exists('type', $presetConfiguration)) {
                 $typeOrPreset = new PropertyPresetNameSpecification($preset);
             }
         }
@@ -57,7 +59,9 @@ class PropertySpecificationFactory
 
         if (is_array($this->presetConfiguration)) {
             foreach ($this->presetConfiguration as $name => $configuration) {
-                $options[] = 'preset:' . $name;
+                if (is_array($configuration) && array_key_exists('type', $configuration)) {
+                    $options[] = 'preset:' . $name;
+                }
             }
         }
 
