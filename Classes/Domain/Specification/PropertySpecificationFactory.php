@@ -27,13 +27,13 @@ class PropertySpecificationFactory
             $typeOrPreset = new PropertyTypeSpecification($type);
         } elseif (str_starts_with($type, "preset:") && is_array($this->presetConfiguration)) {
             $preset = substr($type, 7);
-            if (array_key_exists('preset:' . $preset, $this->presetConfiguration)) {
+            if (array_key_exists($preset, $this->presetConfiguration)) {
                 $typeOrPreset = new PropertyPresetNameSpecification($preset);
             }
         }
 
         if (is_null($typeOrPreset)) {
-            throw new \InvalidArgumentException($type . ' is no valid type pr preset');
+            throw new \InvalidArgumentException($type . ' is no valid type or preset');
         }
 
         return new PropertySpecification(
