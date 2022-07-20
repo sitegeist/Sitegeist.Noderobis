@@ -19,6 +19,7 @@ use Sitegeist\Nodemerobis\Domain\Generator\NodeTypeGenerator;
 use Sitegeist\Nodemerobis\Domain\Generator\CreateNodeTypeYamlFileModificationGenerator;
 use Sitegeist\Nodemerobis\Domain\Modification\ModificationCollection;
 use Sitegeist\Nodemerobis\Domain\Modification\ModificationInterface;
+use Sitegeist\Nodemerobis\Domain\Specification\NodeTypeNameSpecificationFactory;
 use Sitegeist\Nodemerobis\Domain\Specification\TetheredNodeNameSpecification;
 use Sitegeist\Nodemerobis\Domain\Specification\NodeTypeNameSpecification;
 use Sitegeist\Nodemerobis\Domain\Specification\PropertySpecificationFactory;
@@ -70,6 +71,12 @@ class NodeTypeCommandController extends CommandController
      * @Flow\Inject
      */
     protected $tetheredNodeSpecificationFactory;
+
+    /**
+     * @var NodeTypeNameSpecificationFactory
+     * @Flow\Inject
+     */
+    protected $nodeTypeNameSpecificationFactory;
 
     /**
      * @var CreateNodeTypeYamlFileModificationGenerator
@@ -133,31 +140,65 @@ class NodeTypeCommandController extends CommandController
         $this->outputLine((string)$nodeTypeSpecification);
         $this->outputLine();
 
+        $choices = [
+            "add Property",
+            "add ChildNode",
+            "add SuperType",
+        ];
+
+        if ($nodeTypeSpecification->abstract) {
+            $choices[] = 'make Non-Abstract';
+        } else {
+            $choices[] = 'make Abstract';
+        }
+
         $choice = $this->output->select(
-            "Anything left to do?",
+            "What is next?",
             [
-                "addProperty",
-                "addChildnode",
-                "done"
+                ...$choices,
+                "generate NodeType",
+                "quit"
             ],
-            "done"
+            "generate NodeType"
         );
 
         switch ($choice) {
-            case "addProperty":
+            case "add Property":
                 $nodeTypeSpecification = $this->addPropertyToNodeTypeSpecification($nodeTypeSpecification);
                 return $this->refineNodeTypeSpecification($nodeTypeSpecification);
-            case "addChildnode":
+            case "add ChildNode":
                 $nodeTypeSpecification = $this->addTetheredNodeToNodeTypeSpecification($nodeTypeSpecification);
                 return $this->refineNodeTypeSpecification($nodeTypeSpecification);
-            case "done":
+            case "add SuperType":
+                $nodeTypeSpecification = $this->addSuperTypeToNodeTypeSpecification($nodeTypeSpecification);
+                return $this->refineNodeTypeSpecification($nodeTypeSpecification);
+            case "make Abstract":
+                $nodeTypeSpecification = $nodeTypeSpecification->withAbstract(true);
+                return $this->refineNodeTypeSpecification($nodeTypeSpecification);
+            case "make Non-Abstract":
+                $nodeTypeSpecification = $nodeTypeSpecification->withAbstract(false);
+                return $this->refineNodeTypeSpecification($nodeTypeSpecification);
+            case "generate NodeType":
                 return $nodeTypeSpecification;
+            case "quit":
+                $this->quit(0);
+                die(); #just to make phpstan happy
             default:
                 $this->outputLine("Unkonwn option %s", [$choice]);
                 $this->quit(1);
-                die();
+                die(); #just to make phpstan happy
         }
     }
+
+    protected function addSuperTypeToNodeTypeSpecification(NodeTypeSpecification $nodeTypeSpecification): NodeTypeSpecification
+    {
+        $name = $this->output->select("SuperType: ", $this->nodeTypeNameSpecificationFactory->getExistingNodeTypeNames());
+
+        $nodeTypeName = NodeTypeNameSpecification::fromString($name);
+
+        return $nodeTypeSpecification->withSuperType($nodeTypeName);
+    }
+
 
     protected function addTetheredNodeToNodeTypeSpecification(NodeTypeSpecification $nodeTypeSpecification): NodeTypeSpecification
     {

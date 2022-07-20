@@ -55,10 +55,37 @@ class NodeTypeSpecification
         );
     }
 
+    public function withLabel(NodeTypeLabelSpecification $label): self
+    {
+        return new self(
+            $this->name,
+            $this->superTypes,
+            $this->nodeProperties,
+            $this->tetheredNodes,
+            $this->abstract,
+            $label
+        );
+    }
+
+    public function withAbstract(bool $abstract): self
+    {
+        return new self(
+            $this->name,
+            $this->superTypes,
+            $this->nodeProperties,
+            $this->tetheredNodes,
+            $abstract,
+            $this->label
+        );
+    }
+
     public function __toString(): string
     {
         $lines = [];
         $lines[] = $this->name->__toString();
+        if ($this->abstract) {
+            $lines[] = '  abstract';
+        }
         if (!$this->superTypes->isEmpty()) {
             $lines[] = "  SuperTypes: " . $this->superTypes->__toString();
         }
