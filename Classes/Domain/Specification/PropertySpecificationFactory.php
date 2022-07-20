@@ -6,6 +6,7 @@ namespace Sitegeist\Nodemerobis\Domain\Specification;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\Arrays;
+use Sitegeist\Nodemerobis\Utility\ConfigurationUtility;
 
 class PropertySpecificationFactory
 {
@@ -58,9 +59,10 @@ class PropertySpecificationFactory
         }
 
         if (is_array($this->presetConfiguration)) {
-            foreach ($this->presetConfiguration as $name => $configuration) {
-                if (is_array($configuration) && array_key_exists('type', $configuration)) {
-                    $options[] = 'preset:' . $name;
+            if (is_array($this->presetConfiguration)) {
+                $presetPathes = ConfigurationUtility::findConfigurationPathesByKey($this->presetConfiguration, 'type');
+                foreach ($presetPathes as $presetPathe) {
+                    $options[] = 'preset:' . $presetPathe;
                 }
             }
         }
