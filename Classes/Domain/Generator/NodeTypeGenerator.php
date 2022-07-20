@@ -39,7 +39,7 @@ class NodeTypeGenerator implements NodeTypeGeneratorInterface
 
         $superTypes = [];
         foreach ($nodeTypeSpecification->superTypes as $superTypeSpecification) {
-            /** @var NodeType|null $superType  */
+            /** @var NodeType|null $superType */
             $superType = $this->nodeTypeManager->getNodeType($superTypeSpecification->getFullName());
             if ($superType instanceof NodeType) {
                 $superTypes[] = $superType;
@@ -53,7 +53,7 @@ class NodeTypeGenerator implements NodeTypeGeneratorInterface
         }
 
         foreach ($nodeTypeSpecification->nodeProperties as $nodeProperty) {
-            /** @var PropertySpecification $nodeProperty  */
+            /** @var PropertySpecification $nodeProperty */
             $propertyConfiguration = [];
             $typeOrPreset = $nodeProperty->typeOrPreset;
             if ($typeOrPreset instanceof PropertyTypeSpecification) {
@@ -63,10 +63,6 @@ class NodeTypeGenerator implements NodeTypeGeneratorInterface
             }
 
             $propertyConfiguration['ui']['label'] = $nodeProperty->label?->label ?? $nodeProperty->name->name;
-
-            if ($nodeProperty->group) {
-                $propertyConfiguration['ui']['inspector']['group'] = $nodeProperty->group->groupName;
-            }
 
             if ($nodeProperty->description) {
                 $propertyConfiguration['ui']['help']['messsage'] = $nodeProperty->description->description;
@@ -90,13 +86,17 @@ class NodeTypeGenerator implements NodeTypeGeneratorInterface
             }
         }
 
+        # node type is created temporyry to resolve presets and get access to inherited properties and groups
         $nodeType = new NodeType($nodeTypeSpecification->name->getFullName(), $superTypes, $localConfiguration);
 
-        # add missing groups
+        # assign groups and ensure they exist
         foreach ($nodeTypeSpecification->nodeProperties as $nodeProperty) {
             /** @var PropertySpecification $nodeProperty */
-            $groupName = $nodeProperty->group?->groupName ?? null;
-            if ($groupName) {
+            $isInlineEditable = $nodeType->getConfiguration('properties.' . $nodeProperty->name->name . '.ui.inlineEditable');
+
+            if (!$isInlineEditable) {
+                $groupName = $nodeProperty->group?->groupName ?? 'default';
+                $localConfiguration['properties'][$nodeProperty->name->name]['ui']['inspector']['group'] = $groupName;
                 if ($nodeType->hasConfiguration('ui.groups.' . $groupName) == false) {
                     $localConfiguration['ui']['inspector']['groups'][$groupName] = [
                         'tab' => 'default',
@@ -109,7 +109,9 @@ class NodeTypeGenerator implements NodeTypeGeneratorInterface
         }
 
         # add icon based on super type
-        if ($nodeType->isOfType('Neos.Neos:Shortcut')) {
+        if ($nodeTypeSpecification->icon) {
+            $localConfiguration['ui']['icon'] = $nodeTypeSpecification->icon?->name;
+        } elseif ($nodeType->isOfType('Neos.Neos:Shortcut')) {
             $localConfiguration['ui']['icon'] = 'share';
         } elseif ($nodeType->isOfType('Neos.Neos:Document')) {
             $localConfiguration['ui']['icon'] = 'file';

@@ -15,7 +15,8 @@ class NodeTypeSpecification
         public readonly PropertySpecificationCollection $nodeProperties,
         public readonly TetheredNodeSpecificationCollection $tetheredNodes,
         public readonly bool $abstract,
-        public readonly ?NodeTypeLabelSpecification $label = null
+        public readonly ?NodeTypeLabelSpecification $label = null,
+        public readonly ?IconNameSpecification $icon = null
     ) {
     }
 
@@ -27,7 +28,8 @@ class NodeTypeSpecification
             $this->nodeProperties,
             $this->tetheredNodes,
             $this->abstract,
-            $this->label
+            $this->label,
+            $this->icon
         );
     }
 
@@ -39,7 +41,8 @@ class NodeTypeSpecification
             $this->nodeProperties->withProperty($property),
             $this->tetheredNodes,
             $this->abstract,
-            $this->label
+            $this->label,
+            $this->icon
         );
     }
 
@@ -51,19 +54,8 @@ class NodeTypeSpecification
             $this->nodeProperties,
             $this->tetheredNodes->withTetheredNode($tetheredNode),
             $this->abstract,
-            $this->label
-        );
-    }
-
-    public function withLabel(NodeTypeLabelSpecification $label): self
-    {
-        return new self(
-            $this->name,
-            $this->superTypes,
-            $this->nodeProperties,
-            $this->tetheredNodes,
-            $this->abstract,
-            $label
+            $this->label,
+            $this->icon
         );
     }
 
@@ -75,16 +67,46 @@ class NodeTypeSpecification
             $this->nodeProperties,
             $this->tetheredNodes,
             $abstract,
-            $this->label
+            $this->label,
+            $this->icon
+        );
+    }
+
+    public function withLabel(?NodeTypeLabelSpecification $label): self
+    {
+        return new self(
+            $this->name,
+            $this->superTypes,
+            $this->nodeProperties,
+            $this->tetheredNodes,
+            $this->abstract,
+            $label,
+            $this->icon
+        );
+    }
+
+    public function withIcon(?IconNameSpecification $icon): self
+    {
+        return new self(
+            $this->name,
+            $this->superTypes,
+            $this->nodeProperties,
+            $this->tetheredNodes,
+            $this->abstract,
+            $this->label,
+            $icon
         );
     }
 
     public function __toString(): string
     {
-        $lines = [];
-        $lines[] = $this->name->__toString();
+        $label =  $this->name->__toString();
+        $label .= $this->label ? ' - ' . $this->label->label : '';
+        $label .= $this->icon ? ' ['  . $this->icon->name . ']' : '';
+
+        $lines = [$label];
         if ($this->abstract) {
-            $lines[] = '  abstract';
+            $lines[] = '  !!! abstract';
         }
         if (!$this->superTypes->isEmpty()) {
             $lines[] = "  SuperTypes: " . $this->superTypes->__toString();

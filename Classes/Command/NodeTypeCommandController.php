@@ -19,6 +19,8 @@ use Sitegeist\Nodemerobis\Domain\Generator\NodeTypeGenerator;
 use Sitegeist\Nodemerobis\Domain\Generator\CreateNodeTypeYamlFileModificationGenerator;
 use Sitegeist\Nodemerobis\Domain\Modification\ModificationCollection;
 use Sitegeist\Nodemerobis\Domain\Modification\ModificationInterface;
+use Sitegeist\Nodemerobis\Domain\Specification\IconNameSpecification;
+use Sitegeist\Nodemerobis\Domain\Specification\NodeTypeLabelSpecification;
 use Sitegeist\Nodemerobis\Domain\Specification\NodeTypeNameSpecificationFactory;
 use Sitegeist\Nodemerobis\Domain\Specification\TetheredNodeNameSpecification;
 use Sitegeist\Nodemerobis\Domain\Specification\NodeTypeNameSpecification;
@@ -141,9 +143,11 @@ class NodeTypeCommandController extends CommandController
         $this->outputLine();
 
         $choices = [
+            "add Label",
+            "add Icon",
             "add Property",
             "add ChildNode",
-            "add SuperType",
+            "add SuperType"
         ];
 
         if ($nodeTypeSpecification->abstract) {
@@ -163,6 +167,12 @@ class NodeTypeCommandController extends CommandController
         );
 
         switch ($choice) {
+            case "add Label":
+                $nodeTypeSpecification = $this->addLabelToNodeTypeSpecification($nodeTypeSpecification);
+                return $this->refineNodeTypeSpecification($nodeTypeSpecification);
+            case "add Icon":
+                $nodeTypeSpecification = $this->addIconToNodeTypeSpecification($nodeTypeSpecification);
+                return $this->refineNodeTypeSpecification($nodeTypeSpecification);
             case "add Property":
                 $nodeTypeSpecification = $this->addPropertyToNodeTypeSpecification($nodeTypeSpecification);
                 return $this->refineNodeTypeSpecification($nodeTypeSpecification);
@@ -188,6 +198,20 @@ class NodeTypeCommandController extends CommandController
                 $this->quit(1);
                 die(); #just to make phpstan happy
         }
+    }
+
+    protected function addLabelToNodeTypeSpecification(NodeTypeSpecification $nodeTypeSpecification): NodeTypeSpecification
+    {
+        $text = $this->output->ask("Label: ");
+        $label = new NodeTypeLabelSpecification($text);
+        return $nodeTypeSpecification->withLabel($label);
+    }
+
+    protected function addIconToNodeTypeSpecification(NodeTypeSpecification $nodeTypeSpecification): NodeTypeSpecification
+    {
+        $name = $this->output->ask("Icob: ");
+        $icon = new IconNameSpecification($name);
+        return $nodeTypeSpecification->withIcon($icon);
     }
 
     protected function addSuperTypeToNodeTypeSpecification(NodeTypeSpecification $nodeTypeSpecification): NodeTypeSpecification
@@ -234,24 +258,7 @@ class NodeTypeCommandController extends CommandController
         return $nodeTypeSpecification->withProperty($propertySpecification);
     }
 
-    protected function applyModification(ModificationInterface ...$modifications): void
-    {
-        $collection = new ModificationCollection(... $modifications);
 
-        if ($collection->isConfirmationRequired()) {
-            $this->outputLine();
-            $this->outputLine("Confirmation is required. The command will apply following modifications:");
-            $this->outputLine($collection->getDescription());
-            if ($this->output->askConfirmation("Shall we proceed (Y/n)? ") == false) {
-                $this->quit(1);
-            }
-        }
-
-        $collection->apply();
-        $this->outputLine();
-        $this->outputLine("The following modifications were applied:");
-        $this->outputLine($collection->getDescription());
-    }
 
     protected function determinePackage(?string $packageKey = null): FlowPackageInterface
     {
@@ -298,11 +305,35 @@ class NodeTypeCommandController extends CommandController
      */
     protected function generateNodeTypeFromSpecification(NodeTypeSpecification $nodeTypeSpecification, FlowPackageInterface $package): void
     {
+        $this->outputLine();
+        $this->outputLine($nodeTypeSpecification->__toString());
+
         $nodeType = $this->nodeTypeGenerator->generateNodeType($nodeTypeSpecification);
 
         $this->applyModification(
             $this->createNodeTypeYamlFileModificationGenerator->generateModification($package, $nodeType),
             $this->createFusionRendererModificationGenerator->generateModification($package, $nodeType)
         );
+    }
+
+    protected function applyModification(ModificationInterface ...$modifications): void
+    {
+        $collection = new ModificationCollection(... $modifications);
+
+        $this->outputLine();
+        $this->outputLine("The given specification will result in the following modifications");
+
+        $this->outputLine();
+        $this->outputLine($collection->getDescription());
+
+        if ($collection->isConfirmationRequired()) {
+            $this->outputLine();
+            $this->outputLine("Confirmation is required.");
+            if ($this->output->askConfirmation("Shall we proceed (Y/n)? ") == false) {
+                $this->quit(1);
+            }
+        }
+
+        $collection->apply();
     }
 }
