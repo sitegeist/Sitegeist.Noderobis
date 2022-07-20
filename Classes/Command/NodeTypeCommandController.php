@@ -203,26 +203,35 @@ class NodeTypeCommandController extends CommandController
     protected function addLabelToNodeTypeSpecification(NodeTypeSpecification $nodeTypeSpecification): NodeTypeSpecification
     {
         $text = $this->output->ask("Label: ");
-        $label = new NodeTypeLabelSpecification($text);
-        return $nodeTypeSpecification->withLabel($label);
+        if (is_string($text)) {
+            $label = new NodeTypeLabelSpecification((string)$text);
+            return $nodeTypeSpecification->withLabel($label);
+        } else {
+            return $nodeTypeSpecification;
+        }
     }
 
     protected function addIconToNodeTypeSpecification(NodeTypeSpecification $nodeTypeSpecification): NodeTypeSpecification
     {
         $name = $this->output->ask("Icob: ");
-        $icon = new IconNameSpecification($name);
-        return $nodeTypeSpecification->withIcon($icon);
+        if (is_string($name)) {
+            $icon = new IconNameSpecification($name);
+            return $nodeTypeSpecification->withIcon($icon);
+        } else {
+            return $nodeTypeSpecification;
+        }
     }
 
     protected function addSuperTypeToNodeTypeSpecification(NodeTypeSpecification $nodeTypeSpecification): NodeTypeSpecification
     {
         $name = $this->output->select("SuperType: ", $this->nodeTypeNameSpecificationFactory->getExistingNodeTypeNames());
-
-        $nodeTypeName = NodeTypeNameSpecification::fromString($name);
-
-        return $nodeTypeSpecification->withSuperType($nodeTypeName);
+        if (is_string($name)) {
+            $nodeTypeName = NodeTypeNameSpecification::fromString($name);
+            return $nodeTypeSpecification->withSuperType($nodeTypeName);
+        } else {
+            return $nodeTypeSpecification;
+        }
     }
-
 
     protected function addTetheredNodeToNodeTypeSpecification(NodeTypeSpecification $nodeTypeSpecification): NodeTypeSpecification
     {

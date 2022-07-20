@@ -21,6 +21,7 @@
         "test:style": "phpcs --colors -n --standard=PSR12 Classes",
         "test:stan": "phpstan analyse -l 9 Classes",
         "test:unit": "phpunit Tests/Unit",
+        "cc": "phpstan clear cache",
         "test": ["composer install", "composer test:style" , "composer test:stan"]
     },
     "extra": {

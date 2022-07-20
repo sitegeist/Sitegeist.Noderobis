@@ -108,9 +108,9 @@ class NodeTypeGenerator implements NodeTypeGeneratorInterface
             }
         }
 
-        # add icon based on super type
+        # add icon based on specification or super type
         if ($nodeTypeSpecification->icon) {
-            $localConfiguration['ui']['icon'] = $nodeTypeSpecification->icon?->name;
+            $localConfiguration['ui']['icon'] = $nodeTypeSpecification->icon->name;
         } elseif ($nodeType->isOfType('Neos.Neos:Shortcut')) {
             $localConfiguration['ui']['icon'] = 'share';
         } elseif ($nodeType->isOfType('Neos.Neos:Document')) {
