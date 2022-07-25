@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Sitegeist\Nodemerobis\Utility;
+namespace Sitegeist\Noderobis\Utility;
 
 class ConfigurationUtility
 {

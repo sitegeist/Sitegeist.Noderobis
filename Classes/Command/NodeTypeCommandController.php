@@ -1,12 +1,12 @@
 <?php
 
 /*
- * This file is part of the Sitegeist.Nodemerobis package.
+ * This file is part of the Sitegeist.Noderobis package.
  */
 
 declare(strict_types=1);
 
-namespace Sitegeist\Nodemerobis\Command;
+namespace Sitegeist\Noderobis\Command;
 
 use Neos\ContentRepository\Migration\Filters\NodeName;
 use Neos\Flow\Annotations as Flow;
@@ -14,30 +14,30 @@ use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Package\Exception\UnknownPackageException;
 use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Package\PackageManager;
-use Sitegeist\Nodemerobis\Domain\Generator\CreateFusionRendererModificationGenerator;
-use Sitegeist\Nodemerobis\Domain\Generator\NodeTypeGenerator;
-use Sitegeist\Nodemerobis\Domain\Generator\CreateNodeTypeYamlFileModificationGenerator;
-use Sitegeist\Nodemerobis\Domain\Modification\ModificationCollection;
-use Sitegeist\Nodemerobis\Domain\Modification\ModificationInterface;
-use Sitegeist\Nodemerobis\Domain\Specification\IconNameSpecification;
-use Sitegeist\Nodemerobis\Domain\Specification\NodeTypeLabelSpecification;
-use Sitegeist\Nodemerobis\Domain\Specification\NodeTypeNameSpecificationFactory;
-use Sitegeist\Nodemerobis\Domain\Specification\TetheredNodeNameSpecification;
-use Sitegeist\Nodemerobis\Domain\Specification\NodeTypeNameSpecification;
-use Sitegeist\Nodemerobis\Domain\Specification\PropertySpecificationFactory;
-use Sitegeist\Nodemerobis\Domain\Specification\NodeTypeNameSpecificationCollection;
-use Sitegeist\Nodemerobis\Domain\Specification\NodeTypeSpecification;
-use Sitegeist\Nodemerobis\Domain\Specification\PropertyDescriptionSpecification;
-use Sitegeist\Nodemerobis\Domain\Specification\PropertyGroupNameSpecification;
-use Sitegeist\Nodemerobis\Domain\Specification\PropertyLabelSpecification;
-use Sitegeist\Nodemerobis\Domain\Specification\PropertyNameSpecification;
-use Sitegeist\Nodemerobis\Domain\Specification\PropertyPresetNameSpecification;
-use Sitegeist\Nodemerobis\Domain\Specification\PropertySpecification;
-use Sitegeist\Nodemerobis\Domain\Specification\PropertySpecificationCollection;
-use Sitegeist\Nodemerobis\Domain\Specification\PropertyTypeSpecification;
-use Sitegeist\Nodemerobis\Domain\Specification\TetheredNodeSpecification;
-use Sitegeist\Nodemerobis\Domain\Specification\TetheredNodeSpecificationCollection;
-use Sitegeist\Nodemerobis\Domain\Specification\TetheredNodeSpecificationFactory;
+use Sitegeist\Noderobis\Domain\Generator\CreateFusionRendererModificationGenerator;
+use Sitegeist\Noderobis\Domain\Generator\NodeTypeGenerator;
+use Sitegeist\Noderobis\Domain\Generator\CreateNodeTypeYamlFileModificationGenerator;
+use Sitegeist\Noderobis\Domain\Modification\ModificationCollection;
+use Sitegeist\Noderobis\Domain\Modification\ModificationInterface;
+use Sitegeist\Noderobis\Domain\Specification\IconNameSpecification;
+use Sitegeist\Noderobis\Domain\Specification\NodeTypeLabelSpecification;
+use Sitegeist\Noderobis\Domain\Specification\NodeTypeNameSpecificationFactory;
+use Sitegeist\Noderobis\Domain\Specification\TetheredNodeNameSpecification;
+use Sitegeist\Noderobis\Domain\Specification\NodeTypeNameSpecification;
+use Sitegeist\Noderobis\Domain\Specification\PropertySpecificationFactory;
+use Sitegeist\Noderobis\Domain\Specification\NodeTypeNameSpecificationCollection;
+use Sitegeist\Noderobis\Domain\Specification\NodeTypeSpecification;
+use Sitegeist\Noderobis\Domain\Specification\PropertyDescriptionSpecification;
+use Sitegeist\Noderobis\Domain\Specification\PropertyGroupNameSpecification;
+use Sitegeist\Noderobis\Domain\Specification\PropertyLabelSpecification;
+use Sitegeist\Noderobis\Domain\Specification\PropertyNameSpecification;
+use Sitegeist\Noderobis\Domain\Specification\PropertyPresetNameSpecification;
+use Sitegeist\Noderobis\Domain\Specification\PropertySpecification;
+use Sitegeist\Noderobis\Domain\Specification\PropertySpecificationCollection;
+use Sitegeist\Noderobis\Domain\Specification\PropertyTypeSpecification;
+use Sitegeist\Noderobis\Domain\Specification\TetheredNodeSpecification;
+use Sitegeist\Noderobis\Domain\Specification\TetheredNodeSpecificationCollection;
+use Sitegeist\Noderobis\Domain\Specification\TetheredNodeSpecificationFactory;
 
 /**
  * @Flow\Scope("singleton")

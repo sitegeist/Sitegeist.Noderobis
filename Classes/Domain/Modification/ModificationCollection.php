@@ -6,7 +6,7 @@ declare(strict_types=1);
  * This file is part of the Sitegeist.Noderobis package.
  */
 
-namespace Sitegeist\Nodemerobis\Domain\Modification;
+namespace Sitegeist\Noderobis\Domain\Modification;
 
 /**
  * Class ModificationCollection

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Sitegeist\Nodemerobis\Domain\Specification;
+namespace Sitegeist\Noderobis\Domain\Specification;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\Arrays;
-use Sitegeist\Nodemerobis\Utility\ConfigurationUtility;
+use Sitegeist\Noderobis\Utility\ConfigurationUtility;
 
 class PropertySpecificationFactory
 {

@@ -1,5 +1,5 @@
 {
-    "name": "sitegeist/nodemerobis",
+    "name": "sitegeist/noderobis",
     "type": "neos-package",
     "license": "GPL-3.0-or-later",
     "require": {
@@ -8,12 +8,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Sitegeist\\Nodemerobis\\": "Classes/"
+            "Sitegeist\\Noderobis\\": "Classes/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Sitegeist\\Nodemerobis\\Tests\\": "Tests/"
+            "Sitegeist\\Noderobis\\Tests\\": "Tests/"
         }
     },
     "scripts": {
@@ -26,7 +26,7 @@
     },
     "extra": {
         "neos": {
-            "package-key": "Sitegeist.Nodemerobis"
+            "package-key": "Sitegeist.Noderobis"
         }
     },
     "config": {

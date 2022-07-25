@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Sitegeist\Nodemerobis\Domain\Specification;
+namespace Sitegeist\Noderobis\Domain\Specification;
 
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\Flow\Annotations as Flow;

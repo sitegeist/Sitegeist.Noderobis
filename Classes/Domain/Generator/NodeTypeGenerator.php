@@ -6,18 +6,18 @@ declare(strict_types=1);
  * This file is part of the Sitegeist.Noderobis package.
  */
 
-namespace Sitegeist\Nodemerobis\Domain\Generator;
+namespace Sitegeist\Noderobis\Domain\Generator;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
-use Sitegeist\Nodemerobis\Domain\Specification\NodeTypeNameSpecification;
-use Sitegeist\Nodemerobis\Domain\Specification\TetheredNodePresetNameSpecification;
-use Sitegeist\Nodemerobis\Domain\Specification\NodeTypeSpecification;
-use Sitegeist\Nodemerobis\Domain\Specification\PropertyPresetNameSpecification;
-use Sitegeist\Nodemerobis\Domain\Specification\PropertySpecification;
-use Sitegeist\Nodemerobis\Domain\Specification\PropertyTypeSpecification;
-use Sitegeist\Nodemerobis\Domain\Specification\TetheredNodeSpecification;
+use Sitegeist\Noderobis\Domain\Specification\NodeTypeNameSpecification;
+use Sitegeist\Noderobis\Domain\Specification\TetheredNodePresetNameSpecification;
+use Sitegeist\Noderobis\Domain\Specification\NodeTypeSpecification;
+use Sitegeist\Noderobis\Domain\Specification\PropertyPresetNameSpecification;
+use Sitegeist\Noderobis\Domain\Specification\PropertySpecification;
+use Sitegeist\Noderobis\Domain\Specification\PropertyTypeSpecification;
+use Sitegeist\Noderobis\Domain\Specification\TetheredNodeSpecification;
 
 class NodeTypeGenerator implements NodeTypeGeneratorInterface
 {

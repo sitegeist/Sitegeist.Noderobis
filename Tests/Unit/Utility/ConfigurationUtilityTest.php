@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Sitegeist\Nodemerobis\Tests\Utility;
+namespace Sitegeist\Noderobis\Tests\Utility;
 
 use PHPUnit\Framework\TestCase;
-use Sitegeist\Nodemerobis\Utility\ConfigurationUtility;
+use Sitegeist\Noderobis\Utility\ConfigurationUtility;
 
 class ConfigurationUtilityTest extends TestCase
 {

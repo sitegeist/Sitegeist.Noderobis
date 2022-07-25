@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Sitegeist\Nodemerobis\Domain\Specification;
+namespace Sitegeist\Noderobis\Domain\Specification;
 
 use http\Exception\InvalidArgumentException;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\Arrays;
-use Sitegeist\Nodemerobis\Utility\ConfigurationUtility;
+use Sitegeist\Noderobis\Utility\ConfigurationUtility;
 
 class TetheredNodeSpecificationFactory
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Sitegeist\Nodemerobis\Domain\Specification;
+namespace Sitegeist\Noderobis\Domain\Specification;
 
 use Flowpack\SiteKickstarter\Domain\Specification\NameSpecification;
 use Neos\Flow\Annotations as Flow;
