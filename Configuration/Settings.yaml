@@ -1,0 +1,30 @@
+Sitegeist:
+  Noderobis:
+    defaultPackageKey: ~
+
+    properties:
+      'default':
+        prop: '###NAME### = ${q(node).property("###NAME###")}'
+        afx: '{String.htmlSpecialChars(Json.serialize(props.###NAME###))}'
+      'inlineEditable':
+        afx: '<Neos.Neos:Editable property="###NAME###" />'
+      'Neos\Media\Domain\Model\ImageInterface':
+        afx: '<Neos.Neos:ImageTag asset={props.###NAME###} preset="Neos.Media.Browser:Thumbnail" />'
+      'Neos\Media\Domain\Model\Asset':
+        afx: '<Neos.Fusion:Link.Resource href.resource={props.###NAME###.resource} >{props.###NAME###.label}</Neos.Fusion:Link.Resource>'
+      'array<Neos\Media\Domain\Model\Asset>':
+        afx: '<ul><Neos.Fusion:Loop items={props.###NAME###} itemName="asset"><li><Neos.Fusion:Link.Resource href.resource={asset.resource} >{asset.label}</Neos.Fusion:Link.Resource></li></Neos.Fusion:Loop></ul>'
+      'DateTime':
+        afx: '{Date.format(props.###NAME### , "Y-m-d")}'
+      'reference':
+        afx: '<Neos.Neos:NodeLink node={props.###NAME###} >{props.###NAME###.label}</Neos.Neos:NodeLink>'
+      'references':
+        afx: '<ul><Neos.Fusion:Loop items={props.###NAME###} itemName="reference"><li><Neos.Neos:NodeLink node={reference} >{reference.label}</Neos.Neos:NodeLink></li></Neos.Fusion:Loop></ul>'
+      'string':
+        afx: '{props.###NAME###}'
+      'integer':
+        afx: '{props.###NAME###}'
+      'boolean':
+        afx: '{props.###NAME### ? "true" : "false"}'
+
+

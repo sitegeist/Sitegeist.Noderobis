@@ -24,12 +24,26 @@ class TetheredNodeSpecificationFactory
      */
     protected $presetConfiguration;
 
+    /**
+     * @param array<int, string> $input
+     * @return TetheredNodeSpecificationCollection
+     */
+    public function generateTetheredNodeSpecificationCollectionFromCliInputArray(array $input): TetheredNodeSpecificationCollection
+    {
+        $items = [];
+        foreach ($input as $item) {
+            list($name, $config) = explode(':', $item, 2);
+            $items[] = $this->generateTetheredNodeSpecificationFromCliInput($name, $config);
+        }
+        return new TetheredNodeSpecificationCollection(... $items);
+    }
+
     public function generateTetheredNodeSpecificationFromCliInput(string $name, string $type): TetheredNodeSpecification
     {
         $typeOrPreset = null;
         if ($this->nodeTypeManager->hasNodeType($type)) {
             $typeOrPreset = NodeTypeNameSpecification::fromString($type);
-        } elseif (str_starts_with($type, "preset:") && is_array($this->presetConfiguration)) {
+        } elseif (str_starts_with($type, "preset.") && is_array($this->presetConfiguration)) {
             $preset = substr($type, 7);
             $presetConfiguration = Arrays::getValueByPath($this->presetConfiguration, $preset);
             if (is_array($presetConfiguration) && array_key_exists('type', $presetConfiguration)) {
@@ -61,7 +75,7 @@ class TetheredNodeSpecificationFactory
         if (is_array($this->presetConfiguration)) {
             $presetPathes = ConfigurationUtility::findConfigurationPathesByKey($this->presetConfiguration, 'type');
             foreach ($presetPathes as $presetPathe) {
-                $options[] = 'preset:' . $presetPathe;
+                $options[] = 'preset.' . $presetPathe;
             }
         }
 

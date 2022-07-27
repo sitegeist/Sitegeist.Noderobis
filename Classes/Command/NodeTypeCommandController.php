@@ -93,47 +93,65 @@ class NodeTypeCommandController extends CommandController
     protected $createFusionRendererModificationGenerator;
 
     /**
+     * @phpstan-param array<int, string> $property
+     * @phpstan-param array<int, string> $childNode
+     *
      * @param string $name Node Name, last part of NodeType
      * @param string $packageKey (optional) Package, uses fallback from configuration
+     * @param array $childNode (optional)
+     * @param array $property (optional)
+     * @param bool $abstract
+     * @param bool $yes
      * @return void
      * @throws \Neos\Flow\Cli\Exception\StopCommandException
      */
-    public function kickstartDocumentCommand(string $name, ?string $packageKey = null): void
+    public function kickstartDocumentCommand(string $name, ?string $packageKey = null, array $childNode = [], array $property = [], bool $abstract = false, bool $yes = false): void
     {
         $package = $this->determinePackage($packageKey);
 
         $nodeTypeSpecification = new NodeTypeSpecification(
             NodeTypeNameSpecification::fromString($package->getPackageKey() . ':Document.' . $name),
             NodeTypeNameSpecificationCollection::fromStringArray(['Neos.Neos:Document']),
-            new PropertySpecificationCollection(),
-            new TetheredNodeSpecificationCollection(),
-            false
+            $this->propertySpecificationFactory->generatePropertySpecificationCollectionFromCliInputArray($property),
+            $this->tetheredNodeSpecificationFactory->generateTetheredNodeSpecificationCollectionFromCliInputArray($childNode),
+            $abstract
         );
 
-        $nodeTypeSpecification = $this->refineNodeTypeSpecification($nodeTypeSpecification);
-        $this->generateNodeTypeFromSpecification($nodeTypeSpecification, $package);
+        if (!$yes) {
+            $nodeTypeSpecification = $this->refineNodeTypeSpecification($nodeTypeSpecification);
+        }
+        $this->generateNodeTypeFromSpecification($nodeTypeSpecification, $package, $yes);
     }
 
     /**
+     * @phpstan-param array<int, string> $property
+     * @phpstan-param array<int, string> $childNode
+     *
      * @param string $name Node Name, last part of NodeType
      * @param string $packageKey (optional) Package, uses fallback from configuration
+     * @param array $childNode (optional)
+     * @param array $property (optional)
+     * @param bool $abstract
+     * @param bool $yes
      * @return void
      * @throws \Neos\Flow\Cli\Exception\StopCommandException
      */
-    public function kickstartContentCommand(string $name, ?string $packageKey = null): void
+    public function kickstartContentCommand(string $name, ?string $packageKey = null, array $childNode = [], array $property = [], bool $abstract = false, bool $yes = false): void
     {
         $package = $this->determinePackage($packageKey);
 
         $nodeTypeSpecification = new NodeTypeSpecification(
             NodeTypeNameSpecification::fromString($package->getPackageKey() . ':Content.' . $name),
             NodeTypeNameSpecificationCollection::fromStringArray(['Neos.Neos:Content']),
-            new PropertySpecificationCollection(),
-            new TetheredNodeSpecificationCollection(),
-            false
+            $this->propertySpecificationFactory->generatePropertySpecificationCollectionFromCliInputArray($property),
+            $this->tetheredNodeSpecificationFactory->generateTetheredNodeSpecificationCollectionFromCliInputArray($childNode),
+            $abstract
         );
 
-        $nodeTypeSpecification = $this->refineNodeTypeSpecification($nodeTypeSpecification);
-        $this->generateNodeTypeFromSpecification($nodeTypeSpecification, $package);
+        if (!$yes) {
+            $nodeTypeSpecification = $this->refineNodeTypeSpecification($nodeTypeSpecification);
+        }
+        $this->generateNodeTypeFromSpecification($nodeTypeSpecification, $package, $yes);
     }
 
     protected function refineNodeTypeSpecification(NodeTypeSpecification $nodeTypeSpecification): NodeTypeSpecification
@@ -160,8 +178,7 @@ class NodeTypeCommandController extends CommandController
             "What is next?",
             [
                 ...$choices,
-                "generate NodeType",
-                "quit"
+                "FINISH and generate files"
             ],
             "generate NodeType"
         );
@@ -188,11 +205,8 @@ class NodeTypeCommandController extends CommandController
             case "make Non-Abstract":
                 $nodeTypeSpecification = $nodeTypeSpecification->withAbstract(false);
                 return $this->refineNodeTypeSpecification($nodeTypeSpecification);
-            case "generate NodeType":
+            case "FINISH and generate files":
                 return $nodeTypeSpecification;
-            case "quit":
-                $this->quit(0);
-                die(); #just to make phpstan happy
             default:
                 $this->outputLine("Unkonwn option %s", [$choice]);
                 $this->quit(1);
@@ -310,9 +324,10 @@ class NodeTypeCommandController extends CommandController
     /**
      * @param NodeTypeSpecification $nodeTypeSpecification
      * @param FlowPackageInterface $package
+     * @param bool $yes
      * @return void
      */
-    protected function generateNodeTypeFromSpecification(NodeTypeSpecification $nodeTypeSpecification, FlowPackageInterface $package): void
+    protected function generateNodeTypeFromSpecification(NodeTypeSpecification $nodeTypeSpecification, FlowPackageInterface $package, bool $yes = false): void
     {
         $this->outputLine();
         $this->outputLine($nodeTypeSpecification->__toString());
@@ -320,12 +335,13 @@ class NodeTypeCommandController extends CommandController
         $nodeType = $this->nodeTypeGenerator->generateNodeType($nodeTypeSpecification);
 
         $this->applyModification(
+            $yes,
             $this->createNodeTypeYamlFileModificationGenerator->generateModification($package, $nodeType),
-            $this->createFusionRendererModificationGenerator->generateModification($package, $nodeType)
+            $this->createFusionRendererModificationGenerator->generateModification($package, $nodeType),
         );
     }
 
-    protected function applyModification(ModificationInterface ...$modifications): void
+    protected function applyModification(bool $yes, ModificationInterface ...$modifications): void
     {
         $collection = new ModificationCollection(... $modifications);
 
@@ -335,7 +351,7 @@ class NodeTypeCommandController extends CommandController
         $this->outputLine();
         $this->outputLine($collection->getDescription());
 
-        if ($collection->isConfirmationRequired()) {
+        if (!$yes && $collection->isConfirmationRequired()) {
             $this->outputLine();
             $this->outputLine("Confirmation is required.");
             if ($this->output->askConfirmation("Shall we proceed (Y/n)? ") == false) {

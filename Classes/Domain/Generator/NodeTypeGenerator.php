@@ -89,7 +89,7 @@ class NodeTypeGenerator implements NodeTypeGeneratorInterface
         # node type is created temporyry to resolve presets and get access to inherited properties and groups
         $nodeType = new NodeType($nodeTypeSpecification->name->getFullName(), $superTypes, $localConfiguration);
 
-        # assign groups and ensure they exist
+        # assign groups and reload if changed to  inspector properties
         foreach ($nodeTypeSpecification->nodeProperties as $nodeProperty) {
             /** @var PropertySpecification $nodeProperty */
             $isInlineEditable = $nodeType->getConfiguration('properties.' . $nodeProperty->name->name . '.ui.inlineEditable');
@@ -105,6 +105,7 @@ class NodeTypeGenerator implements NodeTypeGeneratorInterface
                     ];
                     $nodeType = new NodeType($nodeTypeSpecification->name->getFullName(), $superTypes, $localConfiguration);
                 }
+                $localConfiguration['properties'][$nodeProperty->name->name]['ui']['reloadIfChanged'] = true;
             }
         }
 

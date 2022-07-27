@@ -22,12 +22,26 @@ class PropertySpecificationFactory
      */
     protected $typeConfiguration;
 
+    /**
+     * @param array<int, string> $input
+     * @return PropertySpecificationCollection
+     */
+    public function generatePropertySpecificationCollectionFromCliInputArray(array $input): PropertySpecificationCollection
+    {
+        $items = [];
+        foreach ($input as $item) {
+            list($name, $config) = explode(':', $item, 2);
+            $items[] = $this->generatePropertySpecificationFromCliInput($name, $config);
+        }
+        return new PropertySpecificationCollection(... $items);
+    }
+
     public function generatePropertySpecificationFromCliInput(string $name, string $type): PropertySpecification
     {
         $typeOrPreset = null;
         if (is_array($this->typeConfiguration) && array_key_exists($type, $this->typeConfiguration)) {
             $typeOrPreset = new PropertyTypeSpecification($type);
-        } elseif (str_starts_with($type, "preset:") && is_array($this->presetConfiguration)) {
+        } elseif (str_starts_with($type, "preset.") && is_array($this->presetConfiguration)) {
             $preset = substr($type, 7);
             $presetConfiguration = Arrays::getValueByPath($this->presetConfiguration, $preset);
             if (is_array($presetConfiguration) && array_key_exists('type', $presetConfiguration)) {
@@ -62,7 +76,7 @@ class PropertySpecificationFactory
             if (is_array($this->presetConfiguration)) {
                 $presetPathes = ConfigurationUtility::findConfigurationPathesByKey($this->presetConfiguration, 'type');
                 foreach ($presetPathes as $presetPathe) {
-                    $options[] = 'preset:' . $presetPathe;
+                    $options[] = 'preset.' . $presetPathe;
                 }
             }
         }
