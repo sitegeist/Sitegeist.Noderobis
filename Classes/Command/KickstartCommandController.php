@@ -20,7 +20,7 @@ use Sitegeist\Noderobis\Domain\Specification\NodeTypeSpecification;
 use Sitegeist\Noderobis\Domain\Specification\TetheredNodeSpecificationFactory;
 
 #[Flow\Scope("singleton")]
-class NodeTypeCommandController extends AbstractCommandController
+class KickstartCommandController extends AbstractCommandController
 {
     /**
      * @var NodeTypeGenerator
@@ -59,7 +59,7 @@ class NodeTypeCommandController extends AbstractCommandController
      * @return void
      * @throws \Neos\Flow\Cli\Exception\StopCommandException
      */
-    public function kickstartDocumentCommand(string $name, ?string $packageKey = null, array $childNode = [], array $property = [], bool $abstract = false, bool $yes = false): void
+    public function documentCommand(string $name, ?string $packageKey = null, array $childNode = [], array $property = [], bool $abstract = false, bool $yes = false): void
     {
         $package = $this->determinePackage($packageKey);
 
@@ -90,7 +90,7 @@ class NodeTypeCommandController extends AbstractCommandController
      * @return void
      * @throws \Neos\Flow\Cli\Exception\StopCommandException
      */
-    public function kickstartContentCommand(string $name, ?string $packageKey = null, array $childNode = [], array $property = [], bool $abstract = false, bool $yes = false): void
+    public function contentCommand(string $name, ?string $packageKey = null, array $childNode = [], array $property = [], bool $abstract = false, bool $yes = false): void
     {
         $package = $this->determinePackage($packageKey);
 

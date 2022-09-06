@@ -26,5 +26,3 @@ Sitegeist:
         afx: '{props.###NAME###}'
       'boolean':
         afx: '{props.###NAME### ? "true" : "false"}'
-
-
