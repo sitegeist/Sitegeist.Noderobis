@@ -135,7 +135,6 @@ class KickstartCommandController extends CommandController
         $determineFlowPackageWizard = new DetermineFlowPackageWizard($this->output);
         $package = $determineFlowPackageWizard->determineFlowPackage($packageKey);
 
-
         $determineSuperTypeWizard = new DeterminePrimarySuperTypeWizard($this->output);
         $primarySuperType = $determineSuperTypeWizard->determinePrimarySuperType($baseType,$package);
 
@@ -144,7 +143,7 @@ class KickstartCommandController extends CommandController
             $primarySuperType ? NodeTypeNameSpecificationCollection::fromStringArray([$primarySuperType->getName(), ...$mixin]) : new NodeTypeNameSpecificationCollection(),
             $this->propertySpecificationFactory->generatePropertySpecificationCollectionFromCliInputArray($property),
             $this->tetheredNodeSpecificationFactory->generateTetheredNodeSpecificationCollectionFromCliInputArray($childNode),
-            is_bool($abstract) ? $abstract : (!$primarySuperType || !$primarySuperType->isOfType('Neos.Neos:Document') || !$primarySuperType->isOfType('Neos.Neos:Content'))
+            is_bool($abstract) ? $abstract : !($primarySuperType && ($primarySuperType->isOfType('Neos.Neos:Document') || $primarySuperType->isOfType('Neos.Neos:Content')))
         );
 
         if (!$yes) {
