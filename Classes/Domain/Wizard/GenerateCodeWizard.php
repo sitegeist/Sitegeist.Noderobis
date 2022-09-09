@@ -57,19 +57,21 @@ class GenerateCodeWizard
             $this->createFusionRendererModificationGenerator->generateModification($package, $nodeType)
         );
 
-        $this->output->outputLine();
-        $this->output->outputLine("The given specification will result in the following modifications");
-
-        $this->output->outputLine();
-        $this->output->outputLine($collection->getDescription());
-
         if (!$yes && $collection->isConfirmationRequired()) {
             $this->output->outputLine();
+            $this->output->outputLine("<info>The given specifications will result in the following modifications</info>");
+            $this->output->outputLine($collection->getDescription());
+
+            $this->output->outputLine();
             $this->output->outputLine("Confirmation is required.");
-            if ($this->output->askConfirmation("Shall we proceed (Y/n)? ") == false) {
+            if ($this->output->askConfirmation("Shall we proceed (Y/n)?") == false) {
                 $this->quit(1);
             }
         }
+
+        $this->output->outputLine();
+        $this->output->outputLine("<info>The following modifications are applied</info>");
+        $this->output->outputLine($collection->getDescription());
 
         $collection->apply();
     }
