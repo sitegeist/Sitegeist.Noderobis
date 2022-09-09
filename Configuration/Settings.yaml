@@ -2,6 +2,10 @@ Sitegeist:
   Noderobis:
     defaultPackageKey: ~
 
+    superTypeDefaults:
+      Document: Neos.Neos:Document
+      Content: Neos.Neos:Content
+
     properties:
       'default':
         prop: '###NAME### = ${q(node).property("###NAME###")}'

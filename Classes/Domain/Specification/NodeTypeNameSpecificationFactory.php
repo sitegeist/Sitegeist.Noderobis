@@ -35,4 +35,20 @@ class NodeTypeNameSpecificationFactory
         }
         return $options;
     }
+
+    /**
+     * @return array<int, string>
+     */
+    public function getExistingMixinNodeTypeNames(): array
+    {
+        $options = [];
+
+        foreach ($this->nodeTypeManager->getNodeTypes(true) as $nodeType) {
+            if ($nodeType->isAbstract() && strpos($nodeType->getName(),'Mixin') !== false) {
+                $options[] = $nodeType->getName();
+            }
+        }
+
+        return $options;
+    }
 }

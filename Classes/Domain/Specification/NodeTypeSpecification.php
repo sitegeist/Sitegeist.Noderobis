@@ -100,7 +100,7 @@ class NodeTypeSpecification
 
     public function __toString(): string
     {
-        $label =  $this->name->__toString();
+        $label =  '<info>' . $this->name->__toString() . '</info>';
         $label .= $this->label ? ' - ' . $this->label->label : '';
         $label .= $this->icon ? ' ['  . $this->icon->name . ']' : '';
 
@@ -109,13 +109,13 @@ class NodeTypeSpecification
             $lines[] = '  !!! abstract';
         }
         if (!$this->superTypes->isEmpty()) {
-            $lines[] = "  SuperTypes: " . $this->superTypes->__toString();
+            $lines[] = "  SuperTypes: <info>" . $this->superTypes->__toString() . '</info>';
         }
         if (!$this->tetheredNodes->isEmpty()) {
-            $lines[] = "  ChildNodes: " . $this->tetheredNodes->__toString();
+            $lines[] = "  ChildNodes: <info>" . $this->tetheredNodes->__toString() . '</info>';
         }
         if (!$this->nodeProperties->isEmpty()) {
-            $lines[] = "  Properties: " . $this->nodeProperties->__toString();
+            $lines[] = "  Properties: <info>" . $this->nodeProperties->__toString() . '</info>';
         }
         return implode(PHP_EOL, $lines);
     }

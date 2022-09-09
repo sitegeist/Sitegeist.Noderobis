@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of the Sitegeist.Noderobis package.
+ */
+
 declare(strict_types=1);
 
 namespace Sitegeist\Noderobis\Utility;

@@ -86,7 +86,7 @@ class NodeTypeGenerator implements NodeTypeGeneratorInterface
             }
         }
 
-        # node type is created temporyry to resolve presets and get access to inherited properties and groups
+        # node type is created temporary to resolve presets and get access to inherited properties and groups
         $nodeType = new NodeType($nodeTypeSpecification->name->getFullName(), $superTypes, $localConfiguration);
 
         # assign groups and reload if changed to  inspector properties
