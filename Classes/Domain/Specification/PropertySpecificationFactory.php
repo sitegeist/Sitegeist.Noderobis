@@ -10,21 +10,16 @@ use Sitegeist\Noderobis\Utility\ConfigurationUtility;
 
 class PropertySpecificationFactory
 {
-    /**
-     * @var array<string, mixed>|null
-     * @Flow\InjectConfiguration(package="Neos.Neos", path="nodeTypes.presets.properties")
-     */
-    protected $presetConfiguration;
+    /** @var array<string, mixed>|null */
+    #[Flow\InjectConfiguration("nodeTypes.presets.properties", "Neos.Neos")]
+    protected array|null $presetConfiguration;
 
-    /**
-     * @var array<string, mixed>|null
-     * @Flow\InjectConfiguration(package="Neos.Neos", path="userInterface.inspector.dataTypes")
-     */
-    protected $typeConfiguration;
+    /** @var array<string, mixed>|null */
+    #[Flow\InjectConfiguration("userInterface.inspector.dataTypes", "Neos.Neos")]
+    protected array|null $typeConfiguration;
 
     /**
      * @param array<int, string> $input
-     * @return PropertySpecificationCollection
      */
     public function generatePropertySpecificationCollectionFromCliInputArray(array $input): PropertySpecificationCollection
     {

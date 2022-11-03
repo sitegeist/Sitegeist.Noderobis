@@ -9,11 +9,8 @@ use Neos\Flow\Annotations as Flow;
 
 class NodeTypeNameSpecificationFactory
 {
-    /**
-     * @var NodeTypeManager
-     * @Flow\Inject
-     */
-    protected $nodeTypeManager;
+    #[Flow\Inject]
+    protected NodeTypeManager $nodeTypeManager;
 
     public function generateNodeTypeNameSpecificationFromCliInput(string $name): NodeTypeNameSpecification
     {

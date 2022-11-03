@@ -29,29 +29,17 @@ use Sitegeist\Noderobis\Domain\Wizard\DetermineFlowPackageWizard;
 #[Flow\Scope("singleton")]
 class KickstartCommandController extends CommandController
 {
-    /**
-     * @var NodeTypeGenerator
-     * @Flow\Inject
-     */
-    protected $nodeTypeGenerator;
+    #[Flow\Inject]
+    protected NodeTypeGenerator $nodeTypeGenerator;
 
-    /**
-     * @var PropertySpecificationFactory
-     * @Flow\Inject
-     */
-    protected $propertySpecificationFactory;
+    #[Flow\Inject]
+    protected PropertySpecificationFactory $propertySpecificationFactory;
 
-    /**
-     * @var TetheredNodeSpecificationFactory
-     * @Flow\Inject
-     */
-    protected $tetheredNodeSpecificationFactory;
+    #[Flow\Inject]
+    protected TetheredNodeSpecificationFactory $tetheredNodeSpecificationFactory;
 
-    /**
-     * @var NodeTypeNameSpecificationFactory
-     * @Flow\Inject
-     */
-    protected $nodeTypeNameSpecificationFactory;
+    #[Flow\Inject]
+    protected NodeTypeNameSpecificationFactory $nodeTypeNameSpecificationFactory;
 
     /**
      * @phpstan-param array<int, string> $property

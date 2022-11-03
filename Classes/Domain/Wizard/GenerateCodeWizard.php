@@ -22,29 +22,17 @@ use Sitegeist\Noderobis\Domain\Specification\NodeTypeSpecification;
 
 class GenerateCodeWizard
 {
-    /**
-     * @var NodeTypeGenerator
-     * @Flow\Inject
-     */
-    protected $nodeTypeGenerator;
+    #[Flow\Inject]
+    protected NodeTypeGenerator $nodeTypeGenerator;
 
-    /**
-     * @var CreateNodeTypeYamlFileModificationGenerator
-     * @Flow\Inject
-     */
-    protected $createNodeTypeYamlFileModificationGenerator;
+    #[Flow\Inject]
+    protected CreateNodeTypeYamlFileModificationGenerator $createNodeTypeYamlFileModificationGenerator;
 
-    /**
-     * @var CreateFusionRendererModificationGenerator
-     * @Flow\Inject
-     */
-    protected $createFusionRendererModificationGenerator;
+    #[Flow\Inject]
+    protected CreateFusionRendererModificationGenerator $createFusionRendererModificationGenerator;
 
-    /**
-     * @var IncludeFusionFromNodeTypesModificationGenerator
-     * @Flow\Inject
-     */
-    protected $includeFusionFromNodeTypesModificationGenerator;
+    #[Flow\Inject]
+    protected IncludeFusionFromNodeTypesModificationGenerator $includeFusionFromNodeTypesModificationGenerator;
 
     public function __construct(
         private readonly ConsoleOutput $output

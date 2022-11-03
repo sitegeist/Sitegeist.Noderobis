@@ -12,17 +12,12 @@ use Sitegeist\Noderobis\Utility\ConfigurationUtility;
 
 class TetheredNodeSpecificationFactory
 {
-    /**
-     * @var NodeTypeManager
-     * @Flow\Inject
-     */
-    protected $nodeTypeManager;
+    #[Flow\Inject]
+    protected NodeTypeManager $nodeTypeManager;
 
-    /**
-     * @var array<string, mixed>|null
-     * @Flow\InjectConfiguration(package="Neos.Neos", path="nodeTypes.presets.childNodes")
-     */
-    protected $presetConfiguration;
+    /** @var array<string, mixed>|null */
+    #[Flow\InjectConfiguration("nodeTypes.presets.childNodes", "Neos.Neos")]
+    protected array|null $presetConfiguration;
 
     /**
      * @param array<int, string> $input

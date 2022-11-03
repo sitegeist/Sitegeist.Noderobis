@@ -21,11 +21,8 @@ use Sitegeist\Noderobis\Domain\Specification\TetheredNodeSpecification;
 
 class NodeTypeGenerator implements NodeTypeGeneratorInterface
 {
-    /**
-     * @var NodeTypeManager
-     * @Flow\Inject
-     */
-    protected $nodeTypeManager;
+    #[Flow\Inject]
+    protected NodeTypeManager $nodeTypeManager;
 
     public function generateNodeType(NodeTypeSpecification $nodeTypeSpecification): NodeType
     {
