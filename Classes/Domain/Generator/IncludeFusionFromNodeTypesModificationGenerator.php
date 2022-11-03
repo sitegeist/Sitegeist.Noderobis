@@ -16,8 +16,7 @@ use Sitegeist\Noderobis\Domain\Modification\ModificationInterface;
 
 class IncludeFusionFromNodeTypesModificationGenerator implements ModificationGeneratorInterface
 {
-
-    public function generateModification(FlowPackageInterface $package,  NodeType $nodeType): ModificationInterface
+    public function generateModification(FlowPackageInterface $package, NodeType $nodeType): ModificationInterface
     {
         $filePath = $package->getPackagePath() . 'Resources/Private/Fusion/Root.fusion';
         return new AddContentToFileModification($filePath, 'include: nodetypes://' . $package->getPackageKey() . '/**/*.fusion', true);
