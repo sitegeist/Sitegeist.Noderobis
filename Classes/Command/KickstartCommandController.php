@@ -103,14 +103,13 @@ class KickstartCommandController extends CommandController
      * @param mixin $mixin (optional)
      * @param array $childNode (optional)
      * @param array $property (optional)
-     * @param bool $abstract
      * @param bool $yes
      * @return void
      * @throws \Neos\Flow\Cli\Exception\StopCommandException
      */
-    public function mixinCommand(string $name, ?string $packageKey = null, array $mixin = [], array $childNode = [], array $property = [], ?bool $abstract = null, bool $yes = false): void
+    public function mixinCommand(string $name, ?string $packageKey = null, array $mixin = [], array $childNode = [], array $property = [], bool $yes = false): void
     {
-        $this->nodetypeCommand(BaseType::Mixin, $name, $packageKey, $mixin, $childNode, $property, $abstract, $yes);
+        $this->nodetypeCommand(BaseType::Mixin, $name, $packageKey, $mixin, $childNode, $property, true, $yes);
     }
 
     /**
