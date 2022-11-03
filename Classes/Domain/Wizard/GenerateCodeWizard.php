@@ -15,6 +15,7 @@ use Neos\Flow\Cli\Exception\StopCommandException;
 use Neos\Flow\Package\FlowPackageInterface;
 use Sitegeist\Noderobis\Domain\Generator\CreateFusionRendererModificationGenerator;
 use Sitegeist\Noderobis\Domain\Generator\CreateNodeTypeYamlFileModificationGenerator;
+use Sitegeist\Noderobis\Domain\Generator\IncludeFusionFromNodeTypesModificationGenerator;
 use Sitegeist\Noderobis\Domain\Generator\NodeTypeGenerator;
 use Sitegeist\Noderobis\Domain\Modification\ModificationCollection;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeSpecification;
@@ -39,6 +40,12 @@ class GenerateCodeWizard
      */
     protected $createFusionRendererModificationGenerator;
 
+    /**
+     * @var IncludeFusionFromNodeTypesModificationGenerator
+     * @Flow\Inject
+     */
+    protected $includeFusionFromNodeTypesModificationGenerator;
+
     public function __construct(
         private readonly ConsoleOutput $output
     ) {
@@ -48,7 +55,8 @@ class GenerateCodeWizard
     {
         $collection = new ModificationCollection(
             $this->createNodeTypeYamlFileModificationGenerator->generateModification($package, $nodeType),
-            $this->createFusionRendererModificationGenerator->generateModification($package, $nodeType)
+            $this->createFusionRendererModificationGenerator->generateModification($package, $nodeType),
+            $this->includeFusionFromNodeTypesModificationGenerator->generateModification($package, $nodeType)
         );
 
         if (!$yes && $collection->isConfirmationRequired()) {
