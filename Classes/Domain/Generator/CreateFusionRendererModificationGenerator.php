@@ -19,17 +19,12 @@ use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 
 class CreateFusionRendererModificationGenerator implements ModificationGeneratorInterface
 {
-    /**
-     * @var NodeTypeManager
-     * @Flow\Inject
-     */
-    protected $nodeTypeManager;
+    #[Flow\Inject]
+    protected NodeTypeManager $nodeTypeManager;
 
-    /**
-     * @var array<string, array{afx:string, prop:string} >
-     * @Flow\InjectConfiguration(path="properties")
-     */
-    protected $propertyRendererConfiguration;
+    /** @var array<string, array{afx:string, prop:string}> */
+    #[Flow\InjectConfiguration("properties")]
+    protected array $propertyRendererConfiguration;
 
     public function generateModification(FlowPackageInterface $package, NodeType $nodeType): ModificationInterface
     {
@@ -52,11 +47,6 @@ class CreateFusionRendererModificationGenerator implements ModificationGenerator
         }
     }
 
-    /**
-     * @param FlowPackageInterface $package
-     * @param NodeType $nodeType
-     * @return string
-     */
     protected function createDocumentFusionPrototype(FlowPackageInterface $package, NodeType $nodeType): string
     {
         $name = $nodeType->getName();
@@ -104,11 +94,6 @@ class CreateFusionRendererModificationGenerator implements ModificationGenerator
         return $fusionCode;
     }
 
-    /**
-     * @param FlowPackageInterface $package
-     * @param NodeType $nodeType
-     * @return string
-     */
     protected function createContentFusionPrototype(FlowPackageInterface $package, NodeType $nodeType): string
     {
         $name = $nodeType->getName();

@@ -17,17 +17,12 @@ use Sitegeist\Noderobis\Domain\Specification\BaseType;
 
 class DeterminePrimarySuperTypeWizard
 {
-    /**
-     * @var NodeTypeManager
-     * @Flow\Inject
-     */
-    protected $nodeTypeManager;
+    #[Flow\Inject]
+    protected NodeTypeManager $nodeTypeManager;
 
-    /**
-     * @var array<string|string>|null
-     * @Flow\InjectConfiguration(path="superTypeDefaults")
-     */
-    protected $superTypeDefaults;
+    /** @var array<string|string>|string|null */
+    #[Flow\InjectConfiguration("superTypeDefaults")]
+    protected array|string|null $superTypeDefaults;
 
     public function determinePrimarySuperType(BaseType $baseType, FlowPackageInterface $flowPackage): ?NodeType
     {

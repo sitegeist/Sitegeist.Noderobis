@@ -16,17 +16,11 @@ use Neos\Flow\Package\PackageManager;
 
 class DetermineFlowPackageWizard
 {
-    /**
-     * @var PackageManager
-     * @Flow\Inject
-     */
-    protected $packageManager;
+    #[Flow\Inject]
+    protected PackageManager $packageManager;
 
-    /**
-     * @var string|null
-     * @Flow\InjectConfiguration(path="defaultPackageKey")
-     */
-    protected $defaultPackageKey;
+    #[Flow\InjectConfiguration("defaultPackageKey")]
+    protected string|null $defaultPackageKey;
 
     public function determineFlowPackage(?string $packageKey = null): FlowPackageInterface
     {

@@ -21,23 +21,14 @@ use Sitegeist\Noderobis\Domain\Specification\TetheredNodeSpecificationFactory;
 
 class SpecificationRefinementWizard
 {
-    /**
-     * @var PropertySpecificationFactory
-     * @Flow\Inject
-     */
-    protected $propertySpecificationFactory;
+    #[Flow\Inject]
+    protected PropertySpecificationFactory $propertySpecificationFactory;
 
-    /**
-     * @var TetheredNodeSpecificationFactory
-     * @Flow\Inject
-     */
-    protected $tetheredNodeSpecificationFactory;
+    #[Flow\Inject]
+    protected TetheredNodeSpecificationFactory $tetheredNodeSpecificationFactory;
 
-    /**
-     * @var NodeTypeNameSpecificationFactory
-     * @Flow\Inject
-     */
-    protected $nodeTypeNameSpecificationFactory;
+    #[Flow\Inject]
+    protected NodeTypeNameSpecificationFactory $nodeTypeNameSpecificationFactory;
 
     public function __construct(
         private readonly ConsoleOutput $output
