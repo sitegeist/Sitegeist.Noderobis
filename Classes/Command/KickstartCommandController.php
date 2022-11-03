@@ -29,7 +29,6 @@ use Sitegeist\Noderobis\Domain\Wizard\DetermineFlowPackageWizard;
 #[Flow\Scope("singleton")]
 class KickstartCommandController extends CommandController
 {
-
     /**
      * @var NodeTypeGenerator
      * @Flow\Inject
@@ -71,7 +70,7 @@ class KickstartCommandController extends CommandController
      */
     public function documentCommand(string $name, ?string $packageKey = null, array $mixin = [], array $childNode = [], array $property = [], ?bool $abstract = null, bool $yes = false): void
     {
-        $this->nodetypeCommand(BaseType::Document,$name,  $packageKey, $mixin,$childNode, $property, $abstract, $yes);
+        $this->nodetypeCommand(BaseType::Document, $name, $packageKey, $mixin, $childNode, $property, $abstract, $yes);
     }
 
     /**
@@ -91,7 +90,7 @@ class KickstartCommandController extends CommandController
      */
     public function contentCommand(string $name, ?string $packageKey = null, array $mixin = [], array $childNode = [], array $property = [], ?bool $abstract = null, bool $yes = false): void
     {
-        $this->nodetypeCommand(BaseType::Content, $name, $packageKey, $mixin,$childNode, $property, $abstract, $yes);
+        $this->nodetypeCommand(BaseType::Content, $name, $packageKey, $mixin, $childNode, $property, $abstract, $yes);
     }
 
     /**
@@ -111,7 +110,7 @@ class KickstartCommandController extends CommandController
      */
     public function mixinCommand(string $name, ?string $packageKey = null, array $mixin = [], array $childNode = [], array $property = [], ?bool $abstract = null, bool $yes = false): void
     {
-        $this->nodetypeCommand(BaseType::Mixin,$name,  $packageKey, $mixin, $childNode, $property, $abstract, $yes);
+        $this->nodetypeCommand(BaseType::Mixin, $name, $packageKey, $mixin, $childNode, $property, $abstract, $yes);
     }
 
     /**
@@ -132,11 +131,11 @@ class KickstartCommandController extends CommandController
      */
     public function nodetypeCommand(BaseType $baseType, string $name, ?string $packageKey = null, array $mixin = [], array $childNode = [], array $property = [], ?bool $abstract = null, bool $yes = false): void
     {
-        $determineFlowPackageWizard = new DetermineFlowPackageWizard($this->output);
+        $determineFlowPackageWizard = new DetermineFlowPackageWizard();
         $package = $determineFlowPackageWizard->determineFlowPackage($packageKey);
 
-        $determineSuperTypeWizard = new DeterminePrimarySuperTypeWizard($this->output);
-        $primarySuperType = $determineSuperTypeWizard->determinePrimarySuperType($baseType,$package);
+        $determineSuperTypeWizard = new DeterminePrimarySuperTypeWizard();
+        $primarySuperType = $determineSuperTypeWizard->determinePrimarySuperType($baseType, $package);
 
         $nodeTypeSpecification = new NodeTypeSpecification(
             NodeTypeNameSpecification::fromString($package->getPackageKey() . ':' . $baseType->value . '.' . $name),

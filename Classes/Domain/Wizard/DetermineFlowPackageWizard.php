@@ -16,7 +16,6 @@ use Neos\Flow\Package\PackageManager;
 
 class DetermineFlowPackageWizard
 {
-
     /**
      * @var PackageManager
      * @Flow\Inject
@@ -28,11 +27,6 @@ class DetermineFlowPackageWizard
      * @Flow\InjectConfiguration(path="defaultPackageKey")
      */
     protected $defaultPackageKey;
-
-    public function __construct(
-        private readonly ConsoleOutput $output
-    ) {
-    }
 
     public function determineFlowPackage(?string $packageKey = null): FlowPackageInterface
     {
@@ -60,6 +54,5 @@ class DetermineFlowPackageWizard
             }
         }
         throw new \InvalidArgumentException('No packageKey or default specified');
-        die();
     }
 }

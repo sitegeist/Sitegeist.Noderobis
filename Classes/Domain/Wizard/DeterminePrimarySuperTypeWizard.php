@@ -17,7 +17,6 @@ use Sitegeist\Noderobis\Domain\Specification\BaseType;
 
 class DeterminePrimarySuperTypeWizard
 {
-
     /**
      * @var NodeTypeManager
      * @Flow\Inject
@@ -25,15 +24,10 @@ class DeterminePrimarySuperTypeWizard
     protected $nodeTypeManager;
 
     /**
-     * @var array|null
+     * @var array<string|string>|null
      * @Flow\InjectConfiguration(path="superTypeDefaults")
      */
     protected $superTypeDefaults;
-
-    public function __construct(
-        private readonly ConsoleOutput $output
-    ) {
-    }
 
     public function determinePrimarySuperType(BaseType $baseType, FlowPackageInterface $flowPackage): ?NodeType
     {
@@ -42,7 +36,7 @@ class DeterminePrimarySuperTypeWizard
             return $this->nodeTypeManager->getNodeType($primarySuperTypeInPackageNamespace);
         }
 
-        if (is_array($this->superTypeDefaults) && array_key_exists( $baseType->value, $this->superTypeDefaults)) {
+        if (is_array($this->superTypeDefaults) && array_key_exists($baseType->value, $this->superTypeDefaults)) {
             if ($this->nodeTypeManager->hasNodeType($this->superTypeDefaults[$baseType->value])) {
                 return $this->nodeTypeManager->getNodeType($this->superTypeDefaults[$baseType->value]);
             }

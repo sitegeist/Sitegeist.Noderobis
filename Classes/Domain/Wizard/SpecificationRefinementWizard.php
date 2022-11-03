@@ -21,7 +21,6 @@ use Sitegeist\Noderobis\Domain\Specification\TetheredNodeSpecificationFactory;
 
 class SpecificationRefinementWizard
 {
-
     /**
      * @var PropertySpecificationFactory
      * @Flow\Inject
@@ -66,6 +65,9 @@ class SpecificationRefinementWizard
             $choices[] = 'make Abstract';
         }
 
+        /**
+         * @var string
+         */
         $choice = $this->output->select(
             "What is next?",
             [

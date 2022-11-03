@@ -44,7 +44,7 @@ class NodeTypeNameSpecificationFactory
         $options = [];
 
         foreach ($this->nodeTypeManager->getNodeTypes(true) as $nodeType) {
-            if ($nodeType->isAbstract() && strpos($nodeType->getName(),'Mixin') !== false) {
+            if ($nodeType->isAbstract() && strpos($nodeType->getName(), 'Mixin') !== false) {
                 $options[] = $nodeType->getName();
             }
         }

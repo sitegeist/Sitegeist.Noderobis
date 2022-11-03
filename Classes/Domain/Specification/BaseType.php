@@ -14,7 +14,7 @@ enum BaseType: string
     case Content = "Content";
     case Mixin = "Mixin";
 
-    public static function fromString($value)
+    public static function fromString(string $value): self
     {
         return self::from($value);
     }

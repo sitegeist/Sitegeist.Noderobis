@@ -11,6 +11,7 @@ namespace Sitegeist\Noderobis\Domain\Wizard;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\ConsoleOutput;
+use Neos\Flow\Cli\Exception\StopCommandException;
 use Neos\Flow\Package\FlowPackageInterface;
 use Sitegeist\Noderobis\Domain\Generator\CreateFusionRendererModificationGenerator;
 use Sitegeist\Noderobis\Domain\Generator\CreateNodeTypeYamlFileModificationGenerator;
@@ -20,7 +21,6 @@ use Sitegeist\Noderobis\Domain\Specification\NodeTypeSpecification;
 
 class GenerateCodeWizard
 {
-
     /**
      * @var NodeTypeGenerator
      * @Flow\Inject
@@ -44,12 +44,6 @@ class GenerateCodeWizard
     ) {
     }
 
-    /**
-     * @param NodeTypeSpecification $nodeTypeSpecification
-     * @param FlowPackageInterface $package
-     * @param bool $yes
-     * @return void
-     */
     public function generateCode(NodeType $nodeType, FlowPackageInterface $package, bool $yes = false): void
     {
         $collection = new ModificationCollection(
@@ -65,7 +59,7 @@ class GenerateCodeWizard
             $this->output->outputLine();
             $this->output->outputLine("Confirmation is required.");
             if ($this->output->askConfirmation("Shall we proceed (Y/n)?") == false) {
-                $this->quit(1);
+                throw new StopCommandException();
             }
         }
 
