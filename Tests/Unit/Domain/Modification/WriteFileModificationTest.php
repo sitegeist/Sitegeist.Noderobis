@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+namespace Sitegeist\Noderobis\Tests\Unit\Domain\Modification;
+
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 use Sitegeist\Noderobis\Domain\Modification\WriteFileModification;
