@@ -1,10 +1,8 @@
 <?php
 declare(strict_types=1);
 
-use Neos\Utility\ObjectAccess;
-use org\bovigo\vfs\vfsStream;
+
 use PHPUnit\Framework\TestCase;
-use Sitegeist\Noderobis\Domain\Modification\WriteFileModification;
 use Sitegeist\Noderobis\Domain\Modification\ModificationCollection;
 use Sitegeist\Noderobis\Domain\Modification\ModificationInterface;
 

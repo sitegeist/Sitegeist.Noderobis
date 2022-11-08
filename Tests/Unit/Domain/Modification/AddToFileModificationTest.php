@@ -1,11 +1,9 @@
 <?php
 declare(strict_types=1);
 
-use Neos\Utility\ObjectAccess;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 use Sitegeist\Noderobis\Domain\Modification\AddToFileModification;
-use Sitegeist\Noderobis\Domain\Modification\WriteFileModification;
 
 class AddToFileModificationTest extends TestCase
 {
@@ -28,7 +26,7 @@ class AddToFileModificationTest extends TestCase
     /**
      * @test
      */
-    public function existingFilesRequireConfirmationIfContentIsMissing()
+    public function existingFilesRequireConfirmationIfContentIsNotPresent()
     {
         file_put_contents('vfs://Test/Directory/ExampleFile.txt', "OtherStuff");
         $modification = new AddToFileModification('vfs://Test/Directory/ExampleFile.txt', 'FileContent');
@@ -39,7 +37,7 @@ class AddToFileModificationTest extends TestCase
     /**
      * @test
      */
-    public function existingFilesDoNotRequireConfirmationIfContentExists()
+    public function existingFilesDoNotRequireConfirmationIfContentIsPresent()
     {
         file_put_contents('vfs://Test/Directory/ExampleFile.txt', 'FileContent' . PHP_EOL . 'OtherStuff');
         $modification = new AddToFileModification('vfs://Test/Directory/ExampleFile.txt', 'FileContent');
@@ -54,7 +52,6 @@ class AddToFileModificationTest extends TestCase
     {
         $modification = new AddToFileModification('vfs://Test/Directory/ExampleFile.txt', 'FileContent');
         $this->assertFileDoesNotExist('vfs://Test/Directory/ExampleFile.txt');
-        $this->assertFalse($modification->isConfirmationRequired());
         $modification->apply();
         $this->assertFileExists('vfs://Test/Directory/ExampleFile.txt');
         $this->assertEquals('FileContent', file_get_contents('vfs://Test/Directory/ExampleFile.txt'));
@@ -68,7 +65,6 @@ class AddToFileModificationTest extends TestCase
         file_put_contents('vfs://Test/Directory/ExampleFile.txt', "OtherStuff");
         $modification = new AddToFileModification('vfs://Test/Directory/ExampleFile.txt', 'FileContent');
         $this->assertFileExists('vfs://Test/Directory/ExampleFile.txt');
-        $this->assertTrue($modification->isConfirmationRequired());
         $modification->apply();
         $this->assertFileExists('vfs://Test/Directory/ExampleFile.txt');
         $this->assertEquals('OtherStuff' . PHP_EOL. 'FileContent' , file_get_contents('vfs://Test/Directory/ExampleFile.txt'));
@@ -82,7 +78,6 @@ class AddToFileModificationTest extends TestCase
         file_put_contents('vfs://Test/Directory/ExampleFile.txt', "OtherStuff");
         $modification = new AddToFileModification('vfs://Test/Directory/ExampleFile.txt', 'FileContent', true);
         $this->assertFileExists('vfs://Test/Directory/ExampleFile.txt');
-        $this->assertTrue($modification->isConfirmationRequired());
         $modification->apply();
         $this->assertFileExists('vfs://Test/Directory/ExampleFile.txt');
         $this->assertEquals('FileContent' . PHP_EOL. 'OtherStuff', file_get_contents('vfs://Test/Directory/ExampleFile.txt'));
@@ -91,13 +86,12 @@ class AddToFileModificationTest extends TestCase
     /**
      * @test
      */
-    public function existingContentDoesnNotRequireConfirmation()
+    public function presentContentIsNotAltered()
     {
-        file_put_contents('vfs://Test/Directory/ExampleFile.txt', "FileContent" . PHP_EOL . "OtherStuff");
+        file_put_contents('vfs://Test/Directory/ExampleFile.txt',  'Stuff'. PHP_EOL . "FileContent" . PHP_EOL . 'OtherStuff');
         $modification = new AddToFileModification('vfs://Test/Directory/ExampleFile.txt', 'FileContent');
         $this->assertFileExists('vfs://Test/Directory/ExampleFile.txt');
-        $this->assertFalse($modification->isConfirmationRequired());
         $modification->apply();
-        $this->assertEquals('FileContent' . PHP_EOL. 'OtherStuff', file_get_contents('vfs://Test/Directory/ExampleFile.txt'));
+        $this->assertEquals('Stuff'. PHP_EOL . "FileContent" . PHP_EOL . 'OtherStuff', file_get_contents('vfs://Test/Directory/ExampleFile.txt'));
     }
 }

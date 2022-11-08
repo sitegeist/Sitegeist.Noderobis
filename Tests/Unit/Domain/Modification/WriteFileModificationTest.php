@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
 
-use Neos\Utility\ObjectAccess;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 use Sitegeist\Noderobis\Domain\Modification\WriteFileModification;
@@ -17,12 +16,31 @@ class WriteFileModificationTest extends TestCase
     /**
      * @test
      */
-    public function contentIsWrittenToSpecifiedLocation()
+    public function nonExistingFilesDoNotRequireConfirmation()
     {
         $modification = new WriteFileModification('vfs://Test/Directory/ExampleFile.txt', 'FileContent');
         $this->assertFileDoesNotExist('vfs://Test/Directory/ExampleFile.txt');
         $this->assertFalse($modification->isConfirmationRequired());
+    }
 
+    /**
+     * @test
+     */
+    public function existingFilesRequireConfirmationIfContentIsNotPresent()
+    {
+        file_put_contents('vfs://Test/Directory/ExampleFile.txt', "OtherStuff");
+        $modification = new WriteFileModification('vfs://Test/Directory/ExampleFile.txt', 'FileContent');
+        $this->assertFileExists('vfs://Test/Directory/ExampleFile.txt');
+        $this->assertTrue($modification->isConfirmationRequired());
+    }
+
+    /**
+     * @test
+     */
+    public function contentIsWrittenToSpecifiedLocation()
+    {
+        $modification = new WriteFileModification('vfs://Test/Directory/ExampleFile.txt', 'FileContent');
+        $this->assertFileDoesNotExist('vfs://Test/Directory/ExampleFile.txt');
         $modification->apply();
         $this->assertFileExists('vfs://Test/Directory/ExampleFile.txt');
         $this->assertEquals('FileContent', file_get_contents('vfs://Test/Directory/ExampleFile.txt'));
@@ -31,12 +49,11 @@ class WriteFileModificationTest extends TestCase
     /**
      * @test
      */
-    public function existingFilesRequireConfirmation()
+    public function existingFilesAreOverwritten()
     {
         file_put_contents('vfs://Test/Directory/ExampleFile.txt', 'OtherStuff');
         $modification = new WriteFileModification('vfs://Test/Directory/ExampleFile.txt', 'FileContent');
         $this->assertFileExists('vfs://Test/Directory/ExampleFile.txt');
-        $this->assertTrue($modification->isConfirmationRequired());
         $modification->apply();
         $this->assertFileExists('vfs://Test/Directory/ExampleFile.txt');
         $this->assertEquals('FileContent', file_get_contents('vfs://Test/Directory/ExampleFile.txt'));
