@@ -6,7 +6,7 @@ namespace Sitegeist\Noderobis\Domain\Modification;
 
 use Neos\Utility\Files;
 
-class AddContentToFileModification implements ModificationInterface
+class AddToFileModification implements ModificationInterface
 {
     protected ?bool $fileExists = null;
     protected ?bool $contentAlreadyExists = null;

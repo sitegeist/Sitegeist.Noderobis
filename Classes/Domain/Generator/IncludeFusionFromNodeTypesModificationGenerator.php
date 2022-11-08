@@ -11,7 +11,7 @@ namespace Sitegeist\Noderobis\Domain\Generator;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Package\FlowPackageInterface;
-use Sitegeist\Noderobis\Domain\Modification\AddContentToFileModification;
+use Sitegeist\Noderobis\Domain\Modification\AddToFileModification;
 use Sitegeist\Noderobis\Domain\Modification\ModificationInterface;
 
 class IncludeFusionFromNodeTypesModificationGenerator implements ModificationGeneratorInterface
@@ -19,6 +19,6 @@ class IncludeFusionFromNodeTypesModificationGenerator implements ModificationGen
     public function generateModification(FlowPackageInterface $package, NodeType $nodeType): ModificationInterface
     {
         $filePath = $package->getPackagePath() . 'Resources/Private/Fusion/Root.fusion';
-        return new AddContentToFileModification($filePath, 'include: nodetypes://' . $package->getPackageKey() . '/**/*.fusion', true);
+        return new AddToFileModification($filePath, 'include: nodetypes://' . $package->getPackageKey() . '/**/*.fusion', true);
     }
 }

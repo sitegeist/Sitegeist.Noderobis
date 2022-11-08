@@ -4,10 +4,10 @@ declare(strict_types=1);
 use Neos\Utility\ObjectAccess;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
-use Sitegeist\Noderobis\Domain\Modification\AddContentToFileModification;
-use Sitegeist\Noderobis\Domain\Modification\CreateFileModification;
+use Sitegeist\Noderobis\Domain\Modification\AddToFileModification;
+use Sitegeist\Noderobis\Domain\Modification\WriteFileModification;
 
-class AddContentToFileModificationTest extends TestCase
+class AddToFileModificationTest extends TestCase
 {
     protected function setUp(): void
     {
@@ -20,7 +20,7 @@ class AddContentToFileModificationTest extends TestCase
      */
     public function nonExistingFilesDoNotRequireConfirmation()
     {
-        $modification = new AddContentToFileModification('vfs://Test/Directory/ExampleFile.txt', 'FileContent');
+        $modification = new AddToFileModification('vfs://Test/Directory/ExampleFile.txt', 'FileContent');
         $this->assertFileDoesNotExist('vfs://Test/Directory/ExampleFile.txt');
         $this->assertFalse($modification->isConfirmationRequired());
     }
@@ -31,7 +31,7 @@ class AddContentToFileModificationTest extends TestCase
     public function existingFilesRequireConfirmationIfContentIsMissing()
     {
         file_put_contents('vfs://Test/Directory/ExampleFile.txt', "OtherStuff");
-        $modification = new AddContentToFileModification('vfs://Test/Directory/ExampleFile.txt', 'FileContent');
+        $modification = new AddToFileModification('vfs://Test/Directory/ExampleFile.txt', 'FileContent');
         $this->assertFileExists('vfs://Test/Directory/ExampleFile.txt');
         $this->assertTrue($modification->isConfirmationRequired());
     }
@@ -42,7 +42,7 @@ class AddContentToFileModificationTest extends TestCase
     public function existingFilesDoNotRequireConfirmationIfContentExists()
     {
         file_put_contents('vfs://Test/Directory/ExampleFile.txt', 'FileContent' . PHP_EOL . 'OtherStuff');
-        $modification = new AddContentToFileModification('vfs://Test/Directory/ExampleFile.txt', 'FileContent');
+        $modification = new AddToFileModification('vfs://Test/Directory/ExampleFile.txt', 'FileContent');
         $this->assertFileExists('vfs://Test/Directory/ExampleFile.txt');
         $this->assertFalse($modification->isConfirmationRequired());
     }
@@ -52,7 +52,7 @@ class AddContentToFileModificationTest extends TestCase
      */
     public function nonExistingFilesAreCreated()
     {
-        $modification = new AddContentToFileModification('vfs://Test/Directory/ExampleFile.txt', 'FileContent');
+        $modification = new AddToFileModification('vfs://Test/Directory/ExampleFile.txt', 'FileContent');
         $this->assertFileDoesNotExist('vfs://Test/Directory/ExampleFile.txt');
         $this->assertFalse($modification->isConfirmationRequired());
         $modification->apply();
@@ -66,7 +66,7 @@ class AddContentToFileModificationTest extends TestCase
     public function existingFilesRequireConfirmationsAndAppendContent()
     {
         file_put_contents('vfs://Test/Directory/ExampleFile.txt', "OtherStuff");
-        $modification = new AddContentToFileModification('vfs://Test/Directory/ExampleFile.txt', 'FileContent');
+        $modification = new AddToFileModification('vfs://Test/Directory/ExampleFile.txt', 'FileContent');
         $this->assertFileExists('vfs://Test/Directory/ExampleFile.txt');
         $this->assertTrue($modification->isConfirmationRequired());
         $modification->apply();
@@ -80,7 +80,7 @@ class AddContentToFileModificationTest extends TestCase
     public function prependOptionEnsuresPrependingContent()
     {
         file_put_contents('vfs://Test/Directory/ExampleFile.txt', "OtherStuff");
-        $modification = new AddContentToFileModification('vfs://Test/Directory/ExampleFile.txt', 'FileContent', true);
+        $modification = new AddToFileModification('vfs://Test/Directory/ExampleFile.txt', 'FileContent', true);
         $this->assertFileExists('vfs://Test/Directory/ExampleFile.txt');
         $this->assertTrue($modification->isConfirmationRequired());
         $modification->apply();
@@ -94,7 +94,7 @@ class AddContentToFileModificationTest extends TestCase
     public function existingContentDoesnNotRequireConfirmation()
     {
         file_put_contents('vfs://Test/Directory/ExampleFile.txt', "FileContent" . PHP_EOL . "OtherStuff");
-        $modification = new AddContentToFileModification('vfs://Test/Directory/ExampleFile.txt', 'FileContent');
+        $modification = new AddToFileModification('vfs://Test/Directory/ExampleFile.txt', 'FileContent');
         $this->assertFileExists('vfs://Test/Directory/ExampleFile.txt');
         $this->assertFalse($modification->isConfirmationRequired());
         $modification->apply();

@@ -4,9 +4,9 @@ declare(strict_types=1);
 use Neos\Utility\ObjectAccess;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
-use Sitegeist\Noderobis\Domain\Modification\CreateFileModification;
+use Sitegeist\Noderobis\Domain\Modification\WriteFileModification;
 
-class CreateFileModificationTest extends TestCase
+class WriteFileModificationTest extends TestCase
 {
     protected function setUp(): void
     {
@@ -19,7 +19,7 @@ class CreateFileModificationTest extends TestCase
      */
     public function contentIsWrittenToSpecifiedLocation()
     {
-        $modification = new CreateFileModification('vfs://Test/Directory/ExampleFile.txt', 'FileContent');
+        $modification = new WriteFileModification('vfs://Test/Directory/ExampleFile.txt', 'FileContent');
         $this->assertFileDoesNotExist('vfs://Test/Directory/ExampleFile.txt');
         $this->assertFalse($modification->isConfirmationRequired());
 
@@ -34,7 +34,7 @@ class CreateFileModificationTest extends TestCase
     public function existingFilesRequireConfirmation()
     {
         file_put_contents('vfs://Test/Directory/ExampleFile.txt', 'OtherStuff');
-        $modification = new CreateFileModification('vfs://Test/Directory/ExampleFile.txt', 'FileContent');
+        $modification = new WriteFileModification('vfs://Test/Directory/ExampleFile.txt', 'FileContent');
         $this->assertFileExists('vfs://Test/Directory/ExampleFile.txt');
         $this->assertTrue($modification->isConfirmationRequired());
         $modification->apply();
