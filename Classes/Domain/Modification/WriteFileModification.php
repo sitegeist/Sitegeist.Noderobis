@@ -10,7 +10,7 @@ namespace Sitegeist\Noderobis\Domain\Modification;
 
 use Neos\Utility\Files;
 
-class CreateFileModification implements ModificationInterface
+class WriteFileModification implements ModificationInterface
 {
     protected ?bool $fileExists = null;
 

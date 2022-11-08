@@ -11,7 +11,7 @@ namespace Sitegeist\Noderobis\Domain\Generator;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\Flow\Package\FlowPackageInterface;
-use Sitegeist\Noderobis\Domain\Modification\CreateFileModification;
+use Sitegeist\Noderobis\Domain\Modification\WriteFileModification;
 use Sitegeist\Noderobis\Domain\Modification\DoNothingModification;
 use Sitegeist\Noderobis\Domain\Modification\ModificationInterface;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeNameSpecification;
@@ -41,7 +41,7 @@ class CreateFusionRendererModificationGenerator implements ModificationGenerator
         if ($fusionCode) {
             $nodeTypeNameSpecification = NodeTypeNameSpecification::fromString($nodeType->getName());
             $filePath = $package->getPackagePath() . 'NodeTypes/' . implode('/', $nodeTypeNameSpecification->getLocalNameParts()) . '.fusion';
-            return new CreateFileModification($filePath, $fusionCode);
+            return new WriteFileModification($filePath, $fusionCode);
         } else {
             return new DoNothingModification();
         }
