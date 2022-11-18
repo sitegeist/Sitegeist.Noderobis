@@ -18,7 +18,19 @@ class IncludeFusionFromNodeTypesModificationGenerator implements ModificationGen
 {
     public function generateModification(FlowPackageInterface $package, NodeType $nodeType): ModificationInterface
     {
-        $filePath = $package->getPackagePath() . 'Resources/Private/Fusion/Root.fusion';
-        return new AddToFileModification($filePath, 'include: nodetypes://' . $package->getPackageKey() . '/**/*.fusion', true);
+        $rootFusionPath = $package->getPackagePath() . 'Resources/Private/Fusion/Root.fusion';
+        $packageKey = $package->getPackageKey();
+        if (class_exists('\Neos\Neos\ResourceManagement\NodeTypesStreamWrapper')) {
+            $includeFusionFromNodeTypes = <<<EOF
+            include: nodetypes://{$packageKey}/**/*.fusion
+            EOF;
+        } else {
+            $includeFusionFromNodeTypes = <<<EOF
+            // @todo after update to Neos 8.2 update to `include: nodetypes://{$packageKey}/**/*.fusion`
+            include: resource://{$packageKey}/../NodeTypes/**/*.fusion
+            EOF;
+        }
+        return new AddToFileModification($rootFusionPath, $includeFusionFromNodeTypes, true);
+
     }
 }
