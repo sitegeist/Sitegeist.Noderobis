@@ -1,11 +1,15 @@
 Sitegeist:
   Noderobis:
+    # package key to be used by default if none is specified
     defaultPackageKey: ~
 
+    # default supertypes for nodetypes when no supertype is found in the packaae namespace
     superTypeDefaults:
       Document: Neos.Neos:Document
       Content: Neos.Neos:Content
 
+    # configuration for accessing and rendering properties in fusion the key `default` is used if no special
+    # config is found for a type
     properties:
       'default':
         prop: '###NAME### = ${q(node).property("###NAME###")}'

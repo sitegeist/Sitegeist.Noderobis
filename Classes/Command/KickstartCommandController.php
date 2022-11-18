@@ -47,12 +47,12 @@ class KickstartCommandController extends CommandController
      * @phpstan-param array<int, string> $mixin
      *
      * @param string $name Node Name, last part of NodeType
-     * @param mixin $mixin (optional)
      * @param string $packageKey (optional) Package, uses fallback from configuration
-     * @param array $childNode (optional)
-     * @param array $property (optional)
-     * @param bool $abstract (optional)
-     * @param bool $yes (optional)
+     * @param array $mixin (optional) Mixin-types to add as SuperTypes, can be used multiple times
+     * @param array $childNode (optional) childNode-names and childNode-NodeType seperated by a colon, can be used multiple times
+     * @param array $property (optional) property-names and property-NodeType seperated by a colon, can be used multiple times
+     * @param bool $abstract (optional) By default contents and documents are created non abstract
+     * @param bool $yes (optional) Skip refinement-process and apply all modifications directly
      * @return void
      * @throws \Neos\Flow\Cli\Exception\StopCommandException
      */
@@ -68,11 +68,11 @@ class KickstartCommandController extends CommandController
      *
      * @param string $name Node Name, last part of NodeType
      * @param string $packageKey (optional) Package, uses fallback from configuration
-     * @param mixin $mixin (optional)
-     * @param array $childNode (optional)
-     * @param array $property (optional)
-     * @param bool $abstract
-     * @param bool $yes
+     * @param array $mixin (optional) Mixin-types to add as SuperTypes, can be used multiple times
+     * @param array $childNode (optional) childNode-names and childNode-NodeType seperated by a colon, can be used multiple times
+     * @param array $property (optional) property-names and property-NodeType seperated by a colon, can be used multiple times
+     * @param bool $abstract (optional) By default contents and documents are created non abstract
+     * @param bool $yes (optional) Skip refinement-process and apply all modifications directly
      * @return void
      * @throws \Neos\Flow\Cli\Exception\StopCommandException
      */
@@ -88,10 +88,11 @@ class KickstartCommandController extends CommandController
      *
      * @param string $name Node Name, last part of NodeType
      * @param string $packageKey (optional) Package, uses fallback from configuration
-     * @param mixin $mixin (optional)
-     * @param array $childNode (optional)
-     * @param array $property (optional)
-     * @param bool $yes
+     * @param array $mixin (optional) Mixin-types to add as SuperTypes, can be used multiple times
+     * @param array $childNode (optional) childNode-names and childNode-NodeType seperated by a colon, can be used multiple times
+     * @param array $property (optional) property-names and property-NodeType seperated by a colon, can be used multiple times
+     * @param bool $abstract (optional) By default contents and documents are created non abstract
+     * @param bool $yes (optional) Skip refinement-process and apply all modifications directly
      * @return void
      * @throws \Neos\Flow\Cli\Exception\StopCommandException
      */
@@ -108,11 +109,11 @@ class KickstartCommandController extends CommandController
      * @param BaseType $baseType Base type (Content, Document or Mixin)
      * @param string $name Node Name, last part of NodeType
      * @param string $packageKey (optional) Package, uses fallback from configuration
-     * @param mixin $mixin (optional) Mixin-types to add as SuperTypes, can be used multiple times
+     * @param array $mixin (optional) Mixin-types to add as SuperTypes, can be used multiple times
      * @param array $childNode (optional) childNode-names and childNode-NodeType seperated by a colon, can be used multiple times
      * @param array $property (optional) property-names and property-NodeType seperated by a colon, can be used multiple times
      * @param bool $abstract (optional) By default contents and documents are created non abstract
-     * @param bool $yes (optional)
+     * @param bool $yes (optional) Skip refinement-process and apply all modifications directly
      * @return void
      * @throws \Neos\Flow\Cli\Exception\StopCommandException
      */
