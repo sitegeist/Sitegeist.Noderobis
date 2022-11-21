@@ -1,5 +1,5 @@
 # Sitegeist.Noderobis
-## Cli-kickstarter for NodeTypes
+## Cli-kickstarter for Neos CMS - NodeTypes
 
 ### Authors & Sponsors
 
