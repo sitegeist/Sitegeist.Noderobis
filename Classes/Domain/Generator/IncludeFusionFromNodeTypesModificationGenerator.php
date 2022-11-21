@@ -31,6 +31,5 @@ class IncludeFusionFromNodeTypesModificationGenerator implements ModificationGen
             EOF;
         }
         return new AddToFileModification($rootFusionPath, $includeFusionFromNodeTypes, true);
-
     }
 }

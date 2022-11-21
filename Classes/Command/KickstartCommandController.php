@@ -91,7 +91,6 @@ class KickstartCommandController extends CommandController
      * @param array $mixin (optional) Mixin-types to add as SuperTypes, can be used multiple times
      * @param array $childNode (optional) childNode-names and childNode-NodeType seperated by a colon, can be used multiple times
      * @param array $property (optional) property-names and property-NodeType seperated by a colon, can be used multiple times
-     * @param bool $abstract (optional) By default contents and documents are created non abstract
      * @param bool $yes (optional) Skip refinement-process and apply all modifications directly
      * @return void
      * @throws \Neos\Flow\Cli\Exception\StopCommandException
