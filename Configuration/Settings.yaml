@@ -3,7 +3,7 @@ Sitegeist:
     # package key to be used by default if none is specified
     defaultPackageKey: ~
 
-    # default supertypes for nodetypes when no supertype is found in the packaae namespace
+    # default supertypes for nodetypes when no supertype is found in the package namespace
     superTypeDefaults:
       Document: Neos.Neos:Document
       Content: Neos.Neos:Content

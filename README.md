@@ -56,7 +56,7 @@ OPTIONS:
 
 ### Specification refinement 
 
-The create commands will call an interactive refinement process after the initioal specification is created. This will
+The create commands will call an interactive refinement process after the initial specification is created. This will
 allo to specify additional properties, mixins etc. as it would be very tedious to put all this into a single cli-call.
 
 ```
@@ -81,8 +81,8 @@ choose "FINISH and generate files" to trigger the generation process.
 
 ### Command `./flow kickstart:nodetype`
 
-The `./flow kickstart:nodetype` command is the core behind the three other commands. 
-It provides the same Cli-API with an additional ''
+The `./flow kickstart:nodetype` command is the core behind the three other commands. It provides the same Cli-API with 
+the additional `--base-type` argument that specifies wether a `Content|Document|Mixin` shall be created.
 
 ## Configuration
 
@@ -94,7 +94,7 @@ Sitegeist:
     # package key to be used by default if none is specified
     defaultPackageKey: ~
 
-    # default supertypes for nodetypes when no supertype is found in the packaae namespace
+    # default supertypes for nodetypes when no supertype is found in the package namespace
     superTypeDefaults:
       Document: Neos.Neos:Document
       Content: Neos.Neos:Content
