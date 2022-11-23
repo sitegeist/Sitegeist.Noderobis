@@ -9,7 +9,7 @@ on:
       - 'main'
 jobs:
   test:
-    name: "Test (PHP ${{ matrix.php-versions }}, Flow ${{ matrix.flow-versions }})"
+    name: "Test (PHP ${{ matrix.php-versions }}, Neos ${{ matrix.neos-versions }})"
 
     strategy:
       fail-fast: false
