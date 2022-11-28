@@ -116,7 +116,7 @@ class KickstartCommandController extends CommandController
      * @return void
      * @throws \Neos\Flow\Cli\Exception\StopCommandException
      */
-    public function nodetypeCommand(BaseType $baseType, string $name, ?string $packageKey = null, array $mixin = [], array $childNode = [], array $property = [], ?bool $abstract = null, bool $yes = false): void
+    protected function nodetypeCommand(BaseType $baseType, string $name, ?string $packageKey = null, array $mixin = [], array $childNode = [], array $property = [], ?bool $abstract = null, bool $yes = false): void
     {
         $determineFlowPackageWizard = new DetermineFlowPackageWizard();
         $package = $determineFlowPackageWizard->determineFlowPackage($packageKey);
@@ -125,7 +125,7 @@ class KickstartCommandController extends CommandController
         $primarySuperType = $determineSuperTypeWizard->determinePrimarySuperType($baseType, $package);
 
         $nodeTypeSpecification = new NodeTypeSpecification(
-            NodeTypeNameSpecification::fromString($package->getPackageKey() . ':' . $baseType->value . '.' . $name),
+            NodeTypeNameSpecification::fromString($package->getPackageKey() . ':' . $baseType->value . '.' . ucfirst($name)),
             $primarySuperType ? NodeTypeNameSpecificationCollection::fromStringArray([$primarySuperType->getName(), ...$mixin]) : new NodeTypeNameSpecificationCollection(),
             $this->propertySpecificationFactory->generatePropertySpecificationCollectionFromCliInputArray($property),
             $this->tetheredNodeSpecificationFactory->generateTetheredNodeSpecificationCollectionFromCliInputArray($childNode),

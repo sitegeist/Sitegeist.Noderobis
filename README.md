@@ -26,7 +26,6 @@ PACKAGE "SITEGEIST.NODEROBIS":
   kickstart:document                       
   kickstart:content                        
   kickstart:mixin                          
-  kickstart:nodetype                       
 ```
 
 ### Commands to create Document|Content|Mixin NodeTypes 
@@ -57,7 +56,7 @@ OPTIONS:
 ### Specification refinement 
 
 The create commands will call an interactive refinement process after the initial specification is created. This will
-allo to specify additional properties, mixins etc. as it would be very tedious to put all this into a single cli-call.
+allow to specify additional properties, mixins etc. as it would be very tedious to put all this into a single cli-call.
 
 ```
 Vendor.Example:Document.Article
