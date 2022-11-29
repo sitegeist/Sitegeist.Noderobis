@@ -78,11 +78,6 @@ What is next?
 The refinement shows a summary of the specification so far and offers to make adjustments. Once you are satisfied you
 choose "FINISH and generate files" to trigger the generation process.
 
-### Command `./flow kickstart:nodetype`
-
-The `./flow kickstart:nodetype` command is the core behind the three other commands. It provides the same Cli-API with 
-the additional `--base-type` argument that specifies wether a `Content|Document|Mixin` shall be created.
-
 ## Configuration
 
 The package allows to configure defaults for packageKeys, superTypes and the generated fusion code for each property type.
