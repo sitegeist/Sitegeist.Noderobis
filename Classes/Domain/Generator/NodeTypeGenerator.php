@@ -31,12 +31,10 @@ class NodeTypeGenerator implements NodeTypeGeneratorInterface
     public function generateNodeType(NodeTypeSpecification $nodeTypeSpecification): NodeType
     {
         $localConfiguration = [
-            'ui' => [],
-            'childNodes' => [],
-            'properties' => []
+            'ui' => [
+                'label' => $nodeTypeSpecification->label?->label ?? $nodeTypeSpecification->name->getNickname()
+            ]
         ];
-
-        $localConfiguration['ui']['label'] = $nodeTypeSpecification->label?->label ?? $nodeTypeSpecification->name->getNickname();
 
         $superTypes = [];
         foreach ($nodeTypeSpecification->superTypes as $superTypeSpecification) {
@@ -77,7 +75,9 @@ class NodeTypeGenerator implements NodeTypeGeneratorInterface
         }
 
         foreach ($nodeTypeSpecification->tetheredNodes as $tetheredNode) {
-
+            if (array_key_exists('childNodes', $localConfiguration) === false) {
+                $localConfiguration['childNodes'] = [];
+            }
             /** @var TetheredNodeSpecification $tetheredNode */
             $typeOrPreset = $tetheredNode->typeOrPreset;
             if ($typeOrPreset instanceof NodeTypeNameSpecification) {
@@ -92,6 +92,9 @@ class NodeTypeGenerator implements NodeTypeGeneratorInterface
 
         # assign groups and reload if changed to  inspector properties
         foreach ($nodeTypeSpecification->nodeProperties as $nodeProperty) {
+            if (array_key_exists('properties', $localConfiguration) === false) {
+                $localConfiguration['properties'] = [];
+            }
             /** @var PropertySpecification $nodeProperty */
             $isInlineEditable = $nodeType->getConfiguration('properties.' . $nodeProperty->name->name . '.ui.inlineEditable');
 
