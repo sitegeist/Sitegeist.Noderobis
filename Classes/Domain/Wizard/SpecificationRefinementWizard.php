@@ -11,6 +11,7 @@ namespace Sitegeist\Noderobis\Domain\Wizard;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\ConsoleOutput;
 use Neos\Flow\Cli\Exception\StopCommandException;
+use Neos\Utility\Exception\InvalidTypeException;
 use Sitegeist\Noderobis\Domain\Specification\IconNameSpecification;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeLabelSpecification;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeNameSpecification;
@@ -29,6 +30,8 @@ class SpecificationRefinementWizard
 
     #[Flow\Inject]
     protected NodeTypeNameSpecificationFactory $nodeTypeNameSpecificationFactory;
+
+    protected $propertyTypesWithAllowedValues = ['integer', 'string', 'array'];
 
     public function __construct(
         private readonly ConsoleOutput $output
@@ -116,7 +119,7 @@ class SpecificationRefinementWizard
 
     protected function addIconToNodeTypeSpecification(NodeTypeSpecification $nodeTypeSpecification): NodeTypeSpecification
     {
-        $name = $this->output->ask("Icob: ");
+        $name = $this->output->ask("Icon: ");
         if (is_string($name)) {
             $icon = new IconNameSpecification($name);
             return $nodeTypeSpecification->withIcon($icon);
@@ -169,13 +172,32 @@ class SpecificationRefinementWizard
         $name = $this->output->ask("Property name: ");
         $type = $this->output->select("Property type: ", $this->propertySpecificationFactory->getTypeConfiguration());
 
+        if (in_array($type,$this->propertyTypesWithAllowedValues)) {
+            $allowedValueList = $this->output->ask("Allowed values (comma separated): ");
+            $allowedValues = explode(',', $allowedValueList);
+            if ($type === 'integer') {
+                $this->output->outputLine();
+                foreach ($allowedValues as $key => $value) {
+                    if (!is_numeric($value)) {
+
+                        $this->output->outputLine(sprintf('Warning: Allowed value "%s" is not an integer value and will be ignored', $value));
+                        unset($allowedValues[$key]);
+                    }
+                }
+               ksort($allowedValues);
+            }
+        } else {
+            $allowedValues = null;
+        }
+
         if (!is_string($name) || !is_string($type)) {
             return $nodeTypeSpecification;
         }
 
         $propertySpecification = $this->propertySpecificationFactory->generatePropertySpecificationFromCliInput(
             trim($name),
-            $type
+            $type,
+            $allowedValues
         );
 
         return $nodeTypeSpecification->withProperty($propertySpecification);
