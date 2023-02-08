@@ -27,6 +27,17 @@ class PropertySpecificationCollection implements \IteratorAggregate
         return new self(...[...$this->nodeProperties, $property]);
     }
 
+    public function withoutProperty(PropertySpecification $property): self
+    {
+        $propertiesFiltered = array_filter(
+            $this->nodeProperties,
+            function (PropertySpecification $spec) use ($property) {
+                return $property !== $spec;
+            }
+        );
+        return new self(... $propertiesFiltered);
+    }
+
     public function isEmpty(): bool
     {
         return empty($this->nodeProperties);

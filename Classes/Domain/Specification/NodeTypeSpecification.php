@@ -33,12 +33,38 @@ class NodeTypeSpecification
         );
     }
 
+    public function withoutSuperType(NodeTypeNameSpecification $nodeTypeName): self
+    {
+        return new self(
+            $this->name,
+            $this->superTypes->withoutNodeTypeName($nodeTypeName),
+            $this->nodeProperties,
+            $this->tetheredNodes,
+            $this->abstract,
+            $this->label,
+            $this->icon
+        );
+    }
+
     public function withProperty(PropertySpecification $property): self
     {
         return new self(
             $this->name,
             $this->superTypes,
             $this->nodeProperties->withProperty($property),
+            $this->tetheredNodes,
+            $this->abstract,
+            $this->label,
+            $this->icon
+        );
+    }
+
+    public function withoutProperty(PropertySpecification $property): self
+    {
+        return new self(
+            $this->name,
+            $this->superTypes,
+            $this->nodeProperties->withoutProperty($property),
             $this->tetheredNodes,
             $this->abstract,
             $this->label,
@@ -53,6 +79,19 @@ class NodeTypeSpecification
             $this->superTypes,
             $this->nodeProperties,
             $this->tetheredNodes->withTetheredNode($tetheredNode),
+            $this->abstract,
+            $this->label,
+            $this->icon
+        );
+    }
+
+    public function withoutTeheredNode(TetheredNodeSpecification $tetheredNode): self
+    {
+        return new self(
+            $this->name,
+            $this->superTypes,
+            $this->nodeProperties,
+            $this->tetheredNodes->withoutTetheredNode($tetheredNode),
             $this->abstract,
             $this->label,
             $this->icon

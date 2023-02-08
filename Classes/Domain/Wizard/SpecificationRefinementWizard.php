@@ -16,7 +16,9 @@ use Sitegeist\Noderobis\Domain\Specification\NodeTypeLabelSpecification;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeNameSpecification;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeNameSpecificationFactory;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeSpecification;
+use Sitegeist\Noderobis\Domain\Specification\PropertySpecification;
 use Sitegeist\Noderobis\Domain\Specification\PropertySpecificationFactory;
+use Sitegeist\Noderobis\Domain\Specification\TetheredNodeSpecification;
 use Sitegeist\Noderobis\Domain\Specification\TetheredNodeSpecificationFactory;
 
 class SpecificationRefinementWizard
@@ -54,6 +56,18 @@ class SpecificationRefinementWizard
             $choices[] = 'make Non-Abstract';
         } else {
             $choices[] = 'make Abstract';
+        }
+
+        if (!$nodeTypeSpecification->nodeProperties->isEmpty()) {
+            $choices[] = "remove Property";
+        }
+
+        if (!$nodeTypeSpecification->tetheredNodes->isEmpty()) {
+            $choices[] = "remove ChildNode";
+        }
+
+        if (!$nodeTypeSpecification->superTypes->isEmpty()) {
+            $choices[] = "remove SuperType";
         }
 
         /**
@@ -95,6 +109,15 @@ class SpecificationRefinementWizard
                 return $this->refineSpecification($nodeTypeSpecification);
             case "make Non-Abstract":
                 $nodeTypeSpecification = $nodeTypeSpecification->withAbstract(false);
+                return $this->refineSpecification($nodeTypeSpecification);
+            case "remove Property":
+                $nodeTypeSpecification = $this->removePropertyFromNodeTypeSpecification($nodeTypeSpecification);
+                return $this->refineSpecification($nodeTypeSpecification);
+            case "remove ChildNode":
+                $nodeTypeSpecification = $this->removeTetheredNodeFromNodeTypeSpecification($nodeTypeSpecification);
+                return $this->refineSpecification($nodeTypeSpecification);
+            case "remove SuperType":
+                $nodeTypeSpecification = $this->removeSuperTypeFromNodeTypeSpecification($nodeTypeSpecification);
                 return $this->refineSpecification($nodeTypeSpecification);
             case "exit":
                 throw new StopCommandException();
@@ -179,5 +202,68 @@ class SpecificationRefinementWizard
         );
 
         return $nodeTypeSpecification->withProperty($propertySpecification);
+    }
+
+    protected function removePropertyFromNodeTypeSpecification(NodeTypeSpecification $nodeTypeSpecification): NodeTypeSpecification
+    {
+        $propertiesByName = array_reduce(
+            iterator_to_array($nodeTypeSpecification->nodeProperties),
+            function (array $carry, PropertySpecification $property) {
+                $carry[(string)$property->name] = $property;
+                return $carry;
+            },
+            []
+        );
+
+        $name = $this->output->select("Property to remove: ", [...array_keys($propertiesByName), 'exit']);
+
+        if (is_string($name) && array_key_exists($name, $propertiesByName)) {
+            $nodeTypeSpecification = $nodeTypeSpecification->withoutProperty($propertiesByName[$name]);
+            return $nodeTypeSpecification;
+        }
+
+        return $nodeTypeSpecification;
+    }
+
+    protected function removeTetheredNodeFromNodeTypeSpecification(NodeTypeSpecification $nodeTypeSpecification): NodeTypeSpecification
+    {
+        $tetheredNodesByName = array_reduce(
+            iterator_to_array($nodeTypeSpecification->tetheredNodes),
+            function (array $carry, TetheredNodeSpecification $tetheredNode) {
+                $carry[(string)$tetheredNode->name] = $tetheredNode;
+                return $carry;
+            },
+            []
+        );
+
+        $name = $this->output->select("ChildNode to remove: ", [...array_keys($tetheredNodesByName), 'exit']);
+
+        if (is_string($name) && array_key_exists($name, $tetheredNodesByName)) {
+            $nodeTypeSpecification = $nodeTypeSpecification->withoutTeheredNode($tetheredNodesByName[$name]);
+            return $nodeTypeSpecification;
+        }
+
+        return $nodeTypeSpecification;
+    }
+
+    protected function removeSuperTypeFromNodeTypeSpecification(NodeTypeSpecification $nodeTypeSpecification): NodeTypeSpecification
+    {
+        $superTypeByName = array_reduce(
+            iterator_to_array($nodeTypeSpecification->superTypes),
+            function (array $carry, NodeTypeNameSpecification $nodeTypeName) {
+                $carry[(string)$nodeTypeName] = $nodeTypeName;
+                return $carry;
+            },
+            []
+        );
+
+        $name = $this->output->select("SuperType to remove: ", [...array_keys($superTypeByName), 'exit']);
+
+        if (is_string($name) && array_key_exists($name, $superTypeByName)) {
+            $nodeTypeSpecification = $nodeTypeSpecification->withoutSuperType($superTypeByName[$name]);
+            return $nodeTypeSpecification;
+        }
+
+        return $nodeTypeSpecification;
     }
 }
