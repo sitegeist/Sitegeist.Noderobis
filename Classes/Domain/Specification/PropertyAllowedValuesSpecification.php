@@ -20,6 +20,6 @@ class PropertyAllowedValuesSpecification
 
     public function __toString(): string
     {
-        return 'allowed values:' . implode(',', $this->allowedValues);
+        return implode(',', $this->allowedValues);
     }
 }

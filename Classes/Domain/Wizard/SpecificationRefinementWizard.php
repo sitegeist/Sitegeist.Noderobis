@@ -11,6 +11,7 @@ namespace Sitegeist\Noderobis\Domain\Wizard;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\ConsoleOutput;
 use Neos\Flow\Cli\Exception\StopCommandException;
+use Neos\Utility\Arrays;
 use Neos\Utility\Exception\InvalidTypeException;
 use Sitegeist\Noderobis\Domain\Specification\IconNameSpecification;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeLabelSpecification;
@@ -174,7 +175,7 @@ class SpecificationRefinementWizard
 
         if (in_array($type,$this->propertyTypesWithAllowedValues)) {
             $allowedValueList = $this->output->ask("Allowed values (comma separated): ");
-            $allowedValues = explode(',', $allowedValueList);
+            $allowedValues = Arrays::trimExplode(',', $allowedValueList);
             if ($type === 'integer') {
                 $this->output->outputLine();
                 foreach ($allowedValues as $key => $value) {

@@ -22,10 +22,11 @@ class PropertySpecification
 
     public function __toString(): string
     {
-        $string = $this->name->name . '(' . $this->typeOrPreset . ')';
+        $string = $this->name->name . '(' . $this->typeOrPreset;
         if ($this->allowedValues) {
-            $string .= ' - ' . $this->allowedValues;
+            $string .= ':' . $this->allowedValues;
         }
+        $string .= ')';
         return $string;
     }
 }

@@ -16,6 +16,6 @@ class PropertyTypeSpecification
 
     public function __toString(): string
     {
-        return 'type:' . $this->type;
+        return $this->type;
     }
 }

@@ -36,14 +36,6 @@ class PropertySpecificationFactory
         $typeOrPreset = null;
         if (is_array($this->typeConfiguration) && array_key_exists($type, $this->typeConfiguration)) {
             $typeOrPreset = new PropertyTypeSpecification($type);
-            if ($typeOrPreset->type === 'integer') {
-                foreach ($allowedValues as $key => $value) {
-                    if (!is_numeric($value)) {
-                        throw new \InvalidArgumentException('At least one allowed value for '. $name . ' is not a valid integer');
-                    }
-                }
-            }
-            $allowedValues = $allowedValues ? new PropertyAllowedValuesSpecification(...$allowedValues) : null;
         } elseif (str_starts_with($type, "preset.") && is_array($this->presetConfiguration)) {
             $preset = substr($type, 7);
             $presetConfiguration = Arrays::getValueByPath($this->presetConfiguration, $preset);
@@ -54,6 +46,28 @@ class PropertySpecificationFactory
 
         if (is_null($typeOrPreset)) {
             throw new \InvalidArgumentException($type . ' is no valid type or preset');
+        }
+
+        if ($allowedValues) {
+            if ($typeOrPreset->type === 'integer') {
+                $allowedValues = array_map(
+                    function (mixed $value) use ($name) {
+                        if (is_numeric($value)) {
+                            return (int)$value;
+                        }
+                        throw new \InvalidArgumentException('At least one allowed value for ' . $name . ' is not a valid integer');
+                    },
+                    $allowedValues
+                );
+            } else {
+                $allowedValues = array_map(
+                    function (mixed $value) use ($name) {
+                        return (string)$value;
+                    },
+                    $allowedValues
+                );
+            }
+            $allowedValues = $allowedValues ? new PropertyAllowedValuesSpecification(...$allowedValues) : null;
         }
 
         return new PropertySpecification(
