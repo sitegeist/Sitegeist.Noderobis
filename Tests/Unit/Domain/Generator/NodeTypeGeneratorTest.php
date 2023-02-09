@@ -12,6 +12,7 @@ use Sitegeist\Noderobis\Domain\Generator\NodeTypeGenerator;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeNameSpecification;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeNameSpecificationCollection;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeSpecification;
+use Sitegeist\Noderobis\Domain\Specification\OptionsSpecification;
 use Sitegeist\Noderobis\Domain\Specification\PropertySpecificationCollection;
 use Sitegeist\Noderobis\Domain\Specification\TetheredNodeSpecificationCollection;
 
@@ -88,7 +89,23 @@ class NodeTypeGeneratorTest extends TestCase
     /**
      * @test
      */
-    public function missingSuperTyypesYieldNodeTypeNotFoundException()
+    public function optionsAreAssigned()
+    {
+        $specification = $this->prepareSpecification();
+
+        $optionSpecification = new OptionsSpecification(['foo' => 'bar', 'test' => ['test1', 'test2']]);
+        $specification = $specification->withOptionsSpecification($optionSpecification);
+
+        $nodeType = $this->generator->generateNodeType($specification);
+
+        $this->assertInstanceOf(NodeType::class, $nodeType);
+        $this->assertSame($optionSpecification->options, $nodeType->getOptions());
+    }
+
+    /**
+     * @test
+     */
+    public function missingSuperTypesYieldNodeTypeNotFoundException()
     {
         $specification = $this->prepareSpecification(
             name: NodeTypeNameSpecification::fromString("Vendor.Package:Example"),
@@ -117,6 +134,7 @@ class NodeTypeGeneratorTest extends TestCase
             $nodeProperties ?? new PropertySpecificationCollection(),
             $tetheredNodes ?? new TetheredNodeSpecificationCollection(),
             $abstract ?? false,
+            null,
             null,
             null
         );

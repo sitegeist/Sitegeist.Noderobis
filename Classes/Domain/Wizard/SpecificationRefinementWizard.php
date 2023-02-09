@@ -32,6 +32,9 @@ class SpecificationRefinementWizard
     #[Flow\Inject]
     protected NodeTypeNameSpecificationFactory $nodeTypeNameSpecificationFactory;
 
+    /**
+     * @var string[]
+     */
     protected $propertyTypesWithAllowedValues = ['integer', 'string', 'array'];
 
     public function __construct(
@@ -173,19 +176,21 @@ class SpecificationRefinementWizard
         $name = $this->output->ask("Property name: ");
         $type = $this->output->select("Property type: ", $this->propertySpecificationFactory->getTypeConfiguration());
 
-        if (in_array($type,$this->propertyTypesWithAllowedValues)) {
+        if (in_array($type, $this->propertyTypesWithAllowedValues)) {
+            /**
+             * @var string $allowedValueList
+             */
             $allowedValueList = $this->output->ask("Allowed values (comma separated): ");
             $allowedValues = Arrays::trimExplode(',', $allowedValueList);
             if ($type === 'integer') {
                 $this->output->outputLine();
                 foreach ($allowedValues as $key => $value) {
                     if (!is_numeric($value)) {
-
                         $this->output->outputLine(sprintf('Warning: Allowed value "%s" is not an integer value and will be ignored', $value));
                         unset($allowedValues[$key]);
                     }
                 }
-               ksort($allowedValues);
+                ksort($allowedValues);
             }
         } else {
             $allowedValues = null;

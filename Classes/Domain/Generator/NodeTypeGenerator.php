@@ -59,27 +59,27 @@ class NodeTypeGenerator implements NodeTypeGeneratorInterface
             $allowedValues = $nodeProperty->allowedValues;
             if ($typeOrPreset instanceof PropertyTypeSpecification) {
                 $propertyConfiguration['type'] = $typeOrPreset->type;
+
+                if ($allowedValues) {
+                    if ($propertyConfiguration['type'] === 'array') {
+                        $propertyConfiguration['ui']['inspector']['editorOptions']['multiple'] = true;
+                    }
+
+                    $allowedValuesConfig = [];
+                    foreach ($allowedValues->allowedValues as $value) {
+                        if ($propertyConfiguration['type'] === 'integer' && !is_numeric($value)) {
+                            continue;
+                        }
+                        $allowedValuesConfig[$value] = ['label' => $value];
+                    }
+                    $propertyConfiguration['ui']['inspector']['editorOptions']['values'] = $allowedValuesConfig;
+                }
             } elseif ($typeOrPreset instanceof PropertyPresetNameSpecification) {
                 $propertyConfiguration['options']['preset'] = $typeOrPreset->presetName;
             }
 
-            if ($allowedValues) {
-                $propertyConfiguration['ui']['inspector']['group'] = 'default';
-                $propertyConfiguration['ui']['inspector']['editor'] = 'Neos.Neos/Inspector/Editors/SelectBoxEditor';
-                if ($propertyConfiguration['type'] === 'array') {
-                    $propertyConfiguration['ui']['inspector']['editorOptions']['multiple'] = true;
-                }
-
-                $allowedValuesConfig = [];
-                foreach ($allowedValues->allowedValues as $value) {
-                    if ($propertyConfiguration['type'] === 'integer' && !is_numeric($value)) {
-                        continue;
-                    }
-                    $allowedValuesConfig[$value] = ['label' => $value];
-                }
-                $propertyConfiguration['ui']['inspector']['editorOptions']['values'] = $allowedValuesConfig;
-            }
-
+            $propertyConfiguration['ui']['inspector']['group'] = 'default';
+            $propertyConfiguration['ui']['inspector']['editor'] = 'Neos.Neos/Inspector/Editors/SelectBoxEditor';
             $propertyConfiguration['ui']['label'] = $nodeProperty->label?->label ?? $nodeProperty->name->name;
 
             if ($nodeProperty->description) {
@@ -130,6 +130,10 @@ class NodeTypeGenerator implements NodeTypeGeneratorInterface
                 }
                 $localConfiguration['properties'][$nodeProperty->name->name]['ui']['reloadIfChanged'] = true;
             }
+        }
+
+        if ($nodeTypeSpecification->optionsSpecification?->options) {
+            $localConfiguration['options'] = $nodeTypeSpecification->optionsSpecification->options;
         }
 
         # add icon based on specification or super type

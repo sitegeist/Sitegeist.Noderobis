@@ -135,7 +135,7 @@ class CreateFusionRendererModificationGenerator implements ModificationGenerator
         }
 
         if ($propertyRenderers) {
-            return 'Properties:' . PHP_EOL . '<dl>' . $this->indent( PHP_EOL . implode(PHP_EOL, $propertyRenderers)) . PHP_EOL . '</dl>';
+            return 'Properties:' . PHP_EOL . '<dl>' . $this->indent(PHP_EOL . implode(PHP_EOL, $propertyRenderers)) . PHP_EOL . '</dl>';
         } else {
             return '';
         }
@@ -183,7 +183,7 @@ class CreateFusionRendererModificationGenerator implements ModificationGenerator
             $childNodeRenderers[] = '<dt>' . $name . '</dt><dd>' . $renderer . '</dd>';
         }
         if (count($childNodeRenderers) > 0) {
-            return 'ChildNodes:' . PHP_EOL . '<dl>' . $this->indent( PHP_EOL . implode(PHP_EOL, $childNodeRenderers)) . PHP_EOL . '</dl>';
+            return 'ChildNodes:' . PHP_EOL . '<dl>' . $this->indent(PHP_EOL . implode(PHP_EOL, $childNodeRenderers)) . PHP_EOL . '</dl>';
         }
         return '';
     }

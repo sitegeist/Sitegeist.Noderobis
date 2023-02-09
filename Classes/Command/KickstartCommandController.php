@@ -16,6 +16,7 @@ use Sitegeist\Noderobis\Domain\Specification\IconNameSpecification;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeLabelSpecification;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeNameSpecificationFactory;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeNameSpecification;
+use Sitegeist\Noderobis\Domain\Specification\OptionsSpecification;
 use Sitegeist\Noderobis\Domain\Specification\PropertySpecificationFactory;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeNameSpecificationCollection;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeSpecification;
@@ -50,7 +51,7 @@ class KickstartCommandController extends CommandController
      * @param string $packageKey (optional) Package, uses fallback from configuration
      * @param array $mixin (optional) Mixin-types to add as SuperTypes, can be used multiple times
      * @param array $childNode (optional) childNode-names and childNode-NodeType seperated by a colon, can be used multiple times
-     * @param array $property (optional) property-names and property-NodeType seperated by a colon, can be used multiple times
+     * @param array $property (optional) property-names, property-NodeType and allowed values (optional), seperated by a colon, can be used multiple times - examples `--property title:string` `--property format:string:portrait,landscape`
      * @param bool $abstract (optional) By default contents and documents are created non abstract
      * @param bool $yes (optional) Skip refinement-process and apply all modifications directly
      * @return void
@@ -70,7 +71,7 @@ class KickstartCommandController extends CommandController
      * @param string $packageKey (optional) Package, uses fallback from configuration
      * @param array $mixin (optional) Mixin-types to add as SuperTypes, can be used multiple times
      * @param array $childNode (optional) childNode-names and childNode-NodeType seperated by a colon, can be used multiple times
-     * @param array $property (optional) property-names and property-NodeType seperated by a colon, can be used multiple times
+     * @param array $property (optional) property-names, property-NodeType and allowed values (optional), seperated by a colon, can be used multiple times - examples `--property title:string` `--property format:string:portrait,landscape`
      * @param bool $abstract (optional) By default contents and documents are created non abstract
      * @param bool $yes (optional) Skip refinement-process and apply all modifications directly
      * @return void
@@ -90,7 +91,7 @@ class KickstartCommandController extends CommandController
      * @param string $packageKey (optional) Package, uses fallback from configuration
      * @param array $mixin (optional) Mixin-types to add as SuperTypes, can be used multiple times
      * @param array $childNode (optional) childNode-names and childNode-NodeType seperated by a colon, can be used multiple times
-     * @param array $property (optional) property-names and property-NodeType seperated by a colon, can be used multiple times
+     * @param array $property (optional) property-names, property-NodeType and allowed values (optional), seperated by a colon, can be used multiple times - examples `--property title:string` `--property format:string:portrait,landscape`
      * @param bool $yes (optional) Skip refinement-process and apply all modifications directly
      * @return void
      * @throws \Neos\Flow\Cli\Exception\StopCommandException
@@ -110,7 +111,7 @@ class KickstartCommandController extends CommandController
      * @param string $packageKey (optional) Package, uses fallback from configuration
      * @param array $mixin (optional) Mixin-types to add as SuperTypes, can be used multiple times
      * @param array $childNode (optional) childNode-names and childNode-NodeType seperated by a colon, can be used multiple times
-     * @param array $property (optional) property-names and property-NodeType seperated by a colon, can be used multiple times
+     * @param array $property (optional) property-names, property-NodeType and allowed values (optional), seperated by a colon, can be used multiple times - examples `--property title:string` `--property format:string:portrait,landscape`
      * @param bool $abstract (optional) By default contents and documents are created non abstract
      * @param bool $yes (optional) Skip refinement-process and apply all modifications directly
      * @return void

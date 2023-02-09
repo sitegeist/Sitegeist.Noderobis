@@ -9,11 +9,13 @@ use Neos\Flow\Annotations as Flow;
 #[Flow\Proxy(false)]
 class PropertyAllowedValuesSpecification
 {
-
+    /**
+     * @var array<int|string>
+     */
     public readonly array $allowedValues;
 
     public function __construct(
-        mixed ...$allowedValues
+        int|string ...$allowedValues
     ) {
         $this->allowedValues = $allowedValues;
     }

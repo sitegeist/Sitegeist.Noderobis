@@ -35,7 +35,7 @@ class GenerateCodeWizard
     #[Flow\Inject]
     protected IncludeFusionFromNodeTypesModificationGenerator $includeFusionFromNodeTypesModificationGenerator;
 
-    /** @var array<string|string>|string|null */
+    /** @var array<string|string>|null */
     #[Flow\InjectConfiguration("modificationGenerators")]
     protected array|null $modificationGeneratorConfig;
 
@@ -51,18 +51,20 @@ class GenerateCodeWizard
     {
         $modificationGenerators = [];
 
-        foreach($this->modificationGeneratorConfig as $key => $generatorClassName) {
-            if (empty($generatorClassName)) {
-                continue;
+        if ($this->modificationGeneratorConfig) {
+            foreach ($this->modificationGeneratorConfig as $key => $generatorClassName) {
+                if (empty($generatorClassName)) {
+                    continue;
+                }
+                if (!class_exists($generatorClassName)) {
+                    throw new InvalidTypeException('Generator Class ' . $generatorClassName . ' does not exist');
+                }
+                $generator = $this->objectManager->get($generatorClassName);
+                if (!$generator instanceof ModificationGeneratorInterface) {
+                    throw new InvalidTypeException('Generator Class ' . $generatorClassName . ' does not implement interface ' . ModificationGeneratorInterface::class);
+                }
+                $modificationGenerators[$key] = $generator->generateModification($package, $nodeType);
             }
-            if (!class_exists($generatorClassName)) {
-                throw new InvalidTypeException('Generator Class ' . $generatorClassName . ' does not exist');
-            }
-            $generator = $this->objectManager->get($generatorClassName);
-            if (!$generator instanceof ModificationGeneratorInterface) {
-                throw new InvalidTypeException('Generator Class ' . $generatorClassName . ' does not implement interface ' . ModificationGeneratorInterface::class);
-            }
-            $modificationGenerators[$key] = $generator->generateModification($package, $nodeType);
         }
 
         $collection = new ModificationCollection(
