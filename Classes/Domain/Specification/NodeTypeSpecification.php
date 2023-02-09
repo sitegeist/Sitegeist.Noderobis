@@ -72,7 +72,15 @@ class NodeTypeSpecification
         );
     }
 
+    /**
+     * @deprecated use withTetheredNode
+     */
     public function withTeheredNode(TetheredNodeSpecification $tetheredNode): self
+    {
+        return $this->withTetheredNode($tetheredNode);
+    }
+
+    public function withTetheredNode(TetheredNodeSpecification $tetheredNode): self
     {
         return new self(
             $this->name,
@@ -85,7 +93,7 @@ class NodeTypeSpecification
         );
     }
 
-    public function withoutTeheredNode(TetheredNodeSpecification $tetheredNode): self
+    public function withoutTetheredNode(TetheredNodeSpecification $tetheredNode): self
     {
         return new self(
             $this->name,

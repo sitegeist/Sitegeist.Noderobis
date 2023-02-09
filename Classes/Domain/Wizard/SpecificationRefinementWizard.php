@@ -184,7 +184,7 @@ class SpecificationRefinementWizard
             $type
         );
 
-        return $nodeTypeSpecification->withTeheredNode($tetheredNode);
+        return $nodeTypeSpecification->withTetheredNode($tetheredNode);
     }
 
     protected function addPropertyToNodeTypeSpecification(NodeTypeSpecification $nodeTypeSpecification): NodeTypeSpecification
@@ -239,7 +239,7 @@ class SpecificationRefinementWizard
         $name = $this->output->select("ChildNode to remove: ", [...array_keys($tetheredNodesByName), 'exit']);
 
         if (is_string($name) && array_key_exists($name, $tetheredNodesByName)) {
-            $nodeTypeSpecification = $nodeTypeSpecification->withoutTeheredNode($tetheredNodesByName[$name]);
+            $nodeTypeSpecification = $nodeTypeSpecification->withoutTetheredNode($tetheredNodesByName[$name]);
             return $nodeTypeSpecification;
         }
 
