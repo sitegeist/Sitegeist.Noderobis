@@ -28,6 +28,17 @@ class NodeTypeNameSpecificationCollection implements \IteratorAggregate
         return new self(...[...$this->nameSpecifications, $nameSpecification]);
     }
 
+    public function withoutNodeTypeName(NodeTypeNameSpecification $nameSpecification): self
+    {
+        $nameSpecificationsFiltered = array_filter(
+            $this->nameSpecifications,
+            function (NodeTypeNameSpecification $spec) use ($nameSpecification) {
+                return $spec !== $nameSpecification;
+            }
+        );
+        return new self(...$nameSpecificationsFiltered);
+    }
+
     /**
      * @param string[] $names
      */

@@ -27,6 +27,17 @@ class TetheredNodeSpecificationCollection implements \IteratorAggregate
         return new self(...[...$this->tetheredNodes, $tetheredNode]);
     }
 
+    public function withoutTetheredNode(TetheredNodeSpecification $tetheredNode): self
+    {
+        $tetheredNodesFiltered = array_filter(
+            $this->tetheredNodes,
+            function (TetheredNodeSpecification $spec) use ($tetheredNode) {
+                return $spec !== $tetheredNode;
+            }
+        );
+        return new self(...$tetheredNodesFiltered);
+    }
+
 
     public function isEmpty(): bool
     {
