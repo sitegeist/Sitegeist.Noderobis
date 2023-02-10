@@ -175,8 +175,12 @@ class SpecificationRefinementWizard
     {
         $name = $this->output->ask("Property name: ");
         $type = $this->output->select("Property type: ", $this->propertySpecificationFactory->getTypeConfiguration());
+        $allowedValues = null;
 
-        if (in_array($type, $this->propertyTypesWithAllowedValues)) {
+        if (
+            in_array($type, $this->propertyTypesWithAllowedValues) &&
+            $this->output->askConfirmation("Do you want to restrict the allowed values? (Y/n)", false)
+        ) {
             /**
              * @var string $allowedValueList
              */
@@ -192,8 +196,6 @@ class SpecificationRefinementWizard
                 }
                 ksort($allowedValues);
             }
-        } else {
-            $allowedValues = null;
         }
 
         if (!is_string($name) || !is_string($type)) {
