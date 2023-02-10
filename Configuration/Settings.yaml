@@ -8,6 +8,12 @@ Sitegeist:
       Document: Neos.Neos:Document
       Content: Neos.Neos:Content
 
+    # modification generators that will be applied
+    modificationGenerators:
+      createNodeTypeYamlFile: '\Sitegeist\Noderobis\Domain\Generator\CreateNodeTypeYamlFileModificationGenerator'
+      createFusionRenderer: '\Sitegeist\Noderobis\Domain\Generator\CreateFusionRendererModificationGenerator'
+      includeFusionFromNodeTypes: '\Sitegeist\Noderobis\Domain\Generator\IncludeFusionFromNodeTypesModificationGenerator'
+
     # configuration for accessing and rendering properties in fusion the key `default` is used if no special
     # config is found for a type
     properties:
