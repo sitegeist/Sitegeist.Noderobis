@@ -11,6 +11,8 @@ namespace Sitegeist\Noderobis\Domain\Wizard;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\ConsoleOutput;
 use Neos\Flow\Cli\Exception\StopCommandException;
+use Neos\Utility\Arrays;
+use Neos\Utility\Exception\InvalidTypeException;
 use Sitegeist\Noderobis\Domain\Specification\IconNameSpecification;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeLabelSpecification;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeNameSpecification;
@@ -31,6 +33,11 @@ class SpecificationRefinementWizard
 
     #[Flow\Inject]
     protected NodeTypeNameSpecificationFactory $nodeTypeNameSpecificationFactory;
+
+    /**
+     * @var string[]
+     */
+    protected $propertyTypesWithAllowedValues = ['integer', 'string', 'array'];
 
     public function __construct(
         private readonly ConsoleOutput $output
@@ -139,7 +146,7 @@ class SpecificationRefinementWizard
 
     protected function addIconToNodeTypeSpecification(NodeTypeSpecification $nodeTypeSpecification): NodeTypeSpecification
     {
-        $name = $this->output->ask("Icob: ");
+        $name = $this->output->ask("Icon: ");
         if (is_string($name)) {
             $icon = new IconNameSpecification($name);
             return $nodeTypeSpecification->withIcon($icon);
@@ -191,6 +198,28 @@ class SpecificationRefinementWizard
     {
         $name = $this->output->ask("Property name: ");
         $type = $this->output->select("Property type: ", $this->propertySpecificationFactory->getTypeConfiguration());
+        $allowedValues = null;
+
+        if (
+            in_array($type, $this->propertyTypesWithAllowedValues) &&
+            $this->output->askConfirmation("Do you want to restrict the allowed values? (Y/n)", false)
+        ) {
+            /**
+             * @var string $allowedValueList
+             */
+            $allowedValueList = $this->output->ask("Allowed values (comma separated): ");
+            $allowedValues = Arrays::trimExplode(',', $allowedValueList);
+            if ($type === 'integer') {
+                $this->output->outputLine();
+                foreach ($allowedValues as $key => $value) {
+                    if (!is_numeric($value)) {
+                        $this->output->outputLine(sprintf('Warning: Allowed value "%s" is not an integer value and will be ignored', $value));
+                        unset($allowedValues[$key]);
+                    }
+                }
+                ksort($allowedValues);
+            }
+        }
 
         if (!is_string($name) || !is_string($type)) {
             return $nodeTypeSpecification;
@@ -198,7 +227,8 @@ class SpecificationRefinementWizard
 
         $propertySpecification = $this->propertySpecificationFactory->generatePropertySpecificationFromCliInput(
             trim($name),
-            $type
+            $type,
+            $allowedValues
         );
 
         return $nodeTypeSpecification->withProperty($propertySpecification);

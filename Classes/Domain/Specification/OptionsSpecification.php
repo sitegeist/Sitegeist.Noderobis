@@ -7,15 +7,13 @@ namespace Sitegeist\Noderobis\Domain\Specification;
 use Neos\Flow\Annotations as Flow;
 
 #[Flow\Proxy(false)]
-class PropertyTypeSpecification
+class OptionsSpecification
 {
+    /**
+     * @param array<mixed>|null $options
+     */
     public function __construct(
-        public readonly string $type
+        public readonly ?array $options
     ) {
-    }
-
-    public function __toString(): string
-    {
-        return $this->type;
     }
 }

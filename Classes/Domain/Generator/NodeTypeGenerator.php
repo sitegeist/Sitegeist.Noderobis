@@ -11,6 +11,7 @@ namespace Sitegeist\Noderobis\Domain\Generator;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\Utility\Exception\InvalidTypeException;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeNameSpecification;
 use Sitegeist\Noderobis\Domain\Specification\TetheredNodePresetNameSpecification;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeSpecification;
@@ -55,12 +56,30 @@ class NodeTypeGenerator implements NodeTypeGeneratorInterface
             /** @var PropertySpecification $nodeProperty */
             $propertyConfiguration = [];
             $typeOrPreset = $nodeProperty->typeOrPreset;
+            $allowedValues = $nodeProperty->allowedValues;
             if ($typeOrPreset instanceof PropertyTypeSpecification) {
                 $propertyConfiguration['type'] = $typeOrPreset->type;
+
+                if ($allowedValues) {
+                    if ($propertyConfiguration['type'] === 'array') {
+                        $propertyConfiguration['ui']['inspector']['editorOptions']['multiple'] = true;
+                    }
+
+                    $allowedValuesConfig = [];
+                    foreach ($allowedValues->allowedValues as $value) {
+                        if ($propertyConfiguration['type'] === 'integer' && !is_numeric($value)) {
+                            continue;
+                        }
+                        $allowedValuesConfig[$value] = ['label' => $value];
+                    }
+                    $propertyConfiguration['ui']['inspector']['editorOptions']['values'] = $allowedValuesConfig;
+                }
             } elseif ($typeOrPreset instanceof PropertyPresetNameSpecification) {
                 $propertyConfiguration['options']['preset'] = $typeOrPreset->presetName;
             }
 
+            $propertyConfiguration['ui']['inspector']['group'] = 'default';
+            $propertyConfiguration['ui']['inspector']['editor'] = 'Neos.Neos/Inspector/Editors/SelectBoxEditor';
             $propertyConfiguration['ui']['label'] = $nodeProperty->label?->label ?? $nodeProperty->name->name;
 
             if ($nodeProperty->description) {
@@ -111,6 +130,10 @@ class NodeTypeGenerator implements NodeTypeGeneratorInterface
                 }
                 $localConfiguration['properties'][$nodeProperty->name->name]['ui']['reloadIfChanged'] = true;
             }
+        }
+
+        if ($nodeTypeSpecification->optionsSpecification?->options) {
+            $localConfiguration['options'] = $nodeTypeSpecification->optionsSpecification->options;
         }
 
         # add icon based on specification or super type

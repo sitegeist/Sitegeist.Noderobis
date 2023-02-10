@@ -25,13 +25,32 @@ class PropertySpecificationFactory
     {
         $items = [];
         foreach ($input as $item) {
-            list($name, $config) = explode(':', $item, 2);
-            $items[] = $this->generatePropertySpecificationFromCliInput($name, $config);
+            if (!is_string($item)) {
+                continue;
+            }
+            $propertyConfig = explode(':', $item, 3);
+            $name = $propertyConfig[0] ?? null;
+            $typeOrPreset = $propertyConfig[1] ?? null;
+            if (!$name) {
+                continue;
+            }
+            if (!$typeOrPreset) {
+                continue;
+            }
+
+            $allowedValues = $propertyConfig[2] ?? null;
+            $items[] = $this->generatePropertySpecificationFromCliInput($name, $typeOrPreset, $allowedValues ? explode(',', $allowedValues) : null);
         }
         return new PropertySpecificationCollection(... $items);
     }
 
-    public function generatePropertySpecificationFromCliInput(string $name, string $type): PropertySpecification
+    /**
+     * @param string $name
+     * @param string $type
+     * @param array<int|string>|null $allowedValues
+     * @return PropertySpecification
+     */
+    public function generatePropertySpecificationFromCliInput(string $name, string $type, ?array $allowedValues = null): PropertySpecification
     {
         $typeOrPreset = null;
         if (is_array($this->typeConfiguration) && array_key_exists($type, $this->typeConfiguration)) {
@@ -48,9 +67,33 @@ class PropertySpecificationFactory
             throw new \InvalidArgumentException($type . ' is no valid type or preset');
         }
 
+        $allowedValuesSpecification = null;
+        if ($allowedValues && $typeOrPreset instanceof PropertyTypeSpecification) {
+            if ($typeOrPreset->type === 'integer') {
+                $allowedValues = array_map(
+                    function (mixed $value) use ($name) {
+                        if (is_numeric($value)) {
+                            return (int)$value;
+                        }
+                        throw new \InvalidArgumentException('At least one allowed value for ' . $name . ' is not a valid integer');
+                    },
+                    $allowedValues
+                );
+            } else {
+                $allowedValues = array_map(
+                    function (mixed $value) {
+                        return (string)$value;
+                    },
+                    $allowedValues
+                );
+            }
+            $allowedValuesSpecification = new PropertyAllowedValuesSpecification(...$allowedValues);
+        }
+
         return new PropertySpecification(
             new PropertyNameSpecification($name),
-            $typeOrPreset
+            $typeOrPreset,
+            $allowedValuesSpecification
         );
     }
 

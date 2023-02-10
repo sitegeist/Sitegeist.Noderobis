@@ -16,7 +16,8 @@ class NodeTypeSpecification
         public readonly TetheredNodeSpecificationCollection $tetheredNodes,
         public readonly bool $abstract,
         public readonly ?NodeTypeLabelSpecification $label = null,
-        public readonly ?IconNameSpecification $icon = null
+        public readonly ?IconNameSpecification $icon = null,
+        public readonly ?OptionsSpecification $optionsSpecification = null
     ) {
     }
 
@@ -29,7 +30,8 @@ class NodeTypeSpecification
             $this->tetheredNodes,
             $this->abstract,
             $this->label,
-            $this->icon
+            $this->icon,
+            $this->optionsSpecification
         );
     }
 
@@ -55,7 +57,8 @@ class NodeTypeSpecification
             $this->tetheredNodes,
             $this->abstract,
             $this->label,
-            $this->icon
+            $this->icon,
+            $this->optionsSpecification
         );
     }
 
@@ -89,7 +92,8 @@ class NodeTypeSpecification
             $this->tetheredNodes->withTetheredNode($tetheredNode),
             $this->abstract,
             $this->label,
-            $this->icon
+            $this->icon,
+            $this->optionsSpecification
         );
     }
 
@@ -115,7 +119,8 @@ class NodeTypeSpecification
             $this->tetheredNodes,
             $abstract,
             $this->label,
-            $this->icon
+            $this->icon,
+            $this->optionsSpecification
         );
     }
 
@@ -128,7 +133,8 @@ class NodeTypeSpecification
             $this->tetheredNodes,
             $this->abstract,
             $label,
-            $this->icon
+            $this->icon,
+            $this->optionsSpecification
         );
     }
 
@@ -141,7 +147,22 @@ class NodeTypeSpecification
             $this->tetheredNodes,
             $this->abstract,
             $this->label,
-            $icon
+            $icon,
+            $this->optionsSpecification
+        );
+    }
+
+    public function withOptionsSpecification(?OptionsSpecification $optionsSpecification): self
+    {
+        return new self(
+            $this->name,
+            $this->superTypes,
+            $this->nodeProperties,
+            $this->tetheredNodes,
+            $this->abstract,
+            $this->label,
+            $this->icon,
+            $optionsSpecification
         );
     }
 

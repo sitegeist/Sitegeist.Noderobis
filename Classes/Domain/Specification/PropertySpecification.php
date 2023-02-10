@@ -12,6 +12,7 @@ class PropertySpecification
     public function __construct(
         public readonly PropertyNameSpecification $name,
         public readonly PropertyTypeSpecification|PropertyPresetNameSpecification $typeOrPreset,
+        public readonly ?PropertyAllowedValuesSpecification $allowedValues = null,
         public readonly ?PropertyLabelSpecification $label = null,
         public readonly ?PropertyDescriptionSpecification $description = null,
         public readonly ?PropertyGroupNameSpecification $group = null,
@@ -21,6 +22,11 @@ class PropertySpecification
 
     public function __toString(): string
     {
-        return $this->name->name . '(' . $this->typeOrPreset . ')';
+        $string = $this->name->name . '(' . $this->typeOrPreset;
+        if ($this->allowedValues) {
+            $string .= ':' . $this->allowedValues;
+        }
+        $string .= ')';
+        return $string;
     }
 }
