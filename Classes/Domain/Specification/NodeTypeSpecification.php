@@ -44,7 +44,8 @@ class NodeTypeSpecification
             $this->tetheredNodes,
             $this->abstract,
             $this->label,
-            $this->icon
+            $this->icon,
+            $this->optionsSpecification
         );
     }
 
@@ -71,7 +72,8 @@ class NodeTypeSpecification
             $this->tetheredNodes,
             $this->abstract,
             $this->label,
-            $this->icon
+            $this->icon,
+            $this->optionsSpecification
         );
     }
 
@@ -106,7 +108,8 @@ class NodeTypeSpecification
             $this->tetheredNodes->withoutTetheredNode($tetheredNode),
             $this->abstract,
             $this->label,
-            $this->icon
+            $this->icon,
+            $this->optionsSpecification
         );
     }
 
