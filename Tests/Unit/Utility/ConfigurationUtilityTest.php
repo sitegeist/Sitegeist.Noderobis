@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Sitegeist\Noderobis\Tests\Utility;
 
-use PHPUnit\Framework\TestCase;
+use Sitegeist\Noderobis\Tests\Unit\BaseTestCase;
 use Sitegeist\Noderobis\Utility\ConfigurationUtility;
 
-class ConfigurationUtilityTest extends TestCase
+class ConfigurationUtilityTest extends BaseTestCase
 {
 
     public function provideDataForFindConfigurationPathesByKeyWorks(): array

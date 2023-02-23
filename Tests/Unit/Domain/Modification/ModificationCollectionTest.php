@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace Sitegeist\Noderobis\Tests\Unit\Domain\Modification;
 
-use PHPUnit\Framework\TestCase;
 use Sitegeist\Noderobis\Domain\Modification\ModificationCollection;
 use Sitegeist\Noderobis\Domain\Modification\ModificationInterface;
+use Sitegeist\Noderobis\Tests\Unit\BaseTestCase;
 
-class ModificationCollectionTest extends TestCase
+class ModificationCollectionTest extends BaseTestCase
 {
     /**
      * @test
