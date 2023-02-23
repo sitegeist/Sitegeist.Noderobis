@@ -72,6 +72,7 @@ class NodeTypeGenerator implements NodeTypeGeneratorInterface
                         }
                         $allowedValuesConfig[$value] = ['label' => $value];
                     }
+                    $propertyConfiguration['ui']['inspector']['editor'] = 'Neos.Neos/Inspector/Editors/SelectBoxEditor';
                     $propertyConfiguration['ui']['inspector']['editorOptions']['values'] = $allowedValuesConfig;
                 }
             } elseif ($typeOrPreset instanceof PropertyPresetNameSpecification) {
@@ -79,7 +80,6 @@ class NodeTypeGenerator implements NodeTypeGeneratorInterface
             }
 
             $propertyConfiguration['ui']['inspector']['group'] = 'default';
-            $propertyConfiguration['ui']['inspector']['editor'] = 'Neos.Neos/Inspector/Editors/SelectBoxEditor';
             $propertyConfiguration['ui']['label'] = $nodeProperty->label?->label ?? $nodeProperty->name->name;
 
             if ($nodeProperty->description) {

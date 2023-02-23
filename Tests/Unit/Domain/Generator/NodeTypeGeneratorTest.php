@@ -7,16 +7,19 @@ use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 use Sitegeist\Noderobis\Domain\Generator\NodeTypeGenerator;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeNameSpecification;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeNameSpecificationCollection;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeSpecification;
 use Sitegeist\Noderobis\Domain\Specification\OptionsSpecification;
+use Sitegeist\Noderobis\Domain\Specification\PropertySpecification;
 use Sitegeist\Noderobis\Domain\Specification\PropertySpecificationCollection;
+use Sitegeist\Noderobis\Domain\Specification\PropertySpecificationFactory;
 use Sitegeist\Noderobis\Domain\Specification\TetheredNodeSpecificationCollection;
+use Sitegeist\Noderobis\Tests\Unit\BaseTestCase;
+use function GuzzleHttp\Promise\queue;
 
-class NodeTypeGeneratorTest extends TestCase
+class NodeTypeGeneratorTest extends BaseTestCase
 {
     protected NodeTypeGenerator $generator;
     protected NodeTypeManager|MockObject $mockNodeTypeManager;
@@ -84,6 +87,77 @@ class NodeTypeGeneratorTest extends TestCase
 
         $this->assertInstanceOf(NodeType::class, $nodetype);
         $this->assertSame([$superTypeA, $superTypeB], $nodetype->getDeclaredSuperTypes());
+    }
+
+
+    public function propertiesAreGeneratedDataProvider (): array
+    {
+        return [
+            [
+                'title',
+                'string',
+                null,
+                [
+                    'type' => 'string',
+                    'ui' => [
+                        'inspector' => ['group' => 'default'],
+                        'label' => 'title',
+                        'reloadIfChanged' => true
+                    ]
+                ]
+            ],
+            [
+                'gender',
+                'string',
+                ['male', 'female'],
+                [
+                    'type' => 'string',
+                    'ui' => [
+                        'inspector' => [
+                            'editor' => 'Neos.Neos/Inspector/Editors/SelectBoxEditor',
+                            'editorOptions' => ['values' => ['male' => ['label' => 'male'], 'female' => ['label' => 'female']]],
+                            'group' => 'default'
+                        ],
+                        'label' => 'gender',
+                        'reloadIfChanged' => true
+                    ]
+                ]
+            ],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider propertiesAreGeneratedDataProvider
+     */
+    public function propertiesAreGenerated(string $name, string $typeOrPreset, array $allowedValues = null, array $expectedPropertyConfiguration)
+    {
+        $factory = new PropertySpecificationFactory();
+        $this->inject(
+            $factory,
+            'typeConfiguration',
+            [
+                'string' => ['editor' => 'Neos.Neos/Inspector/Editors/TextFieldEditor'],
+                'integer' => ['editor' => 'Neos.Neos/Inspector/Editors/TextFieldEditor'],
+                'boolean' => ['editor' => 'Neos.Neos/Inspector/Editors/BooleanEditor'],
+                'array' => ['typeConverter' => 'Neos\\Flow\\Property\\TypeConverter\\ArrayConverter', 'editor' => 'Neos.Neos/Inspector/Editors/SelectBoxEditor']
+            ]
+        );
+
+        $propertySpecification = $factory->generatePropertySpecificationFromCliInput($name, $typeOrPreset, $allowedValues);
+
+        $specification = $this->prepareSpecification(
+            name: NodeTypeNameSpecification::fromString("Vendor.Package:Example")
+        );
+        $specification = $specification->withProperty($propertySpecification);
+
+        $nodetype = $this->generator->generateNodeType($specification);
+        $properties = $nodetype->getProperties();
+
+        $this->assertInstanceOf(NodeType::class, $nodetype);
+        $this->assertSame("Vendor.Package:Example", $nodetype->getName());
+        $this->assertArrayHasKey($name, $properties);
+        $this->assertSame($expectedPropertyConfiguration, $properties[$name]);
     }
 
     /**

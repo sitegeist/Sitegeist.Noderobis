@@ -12,11 +12,11 @@ class PropertySpecificationFactory
 {
     /** @var array<string, mixed>|null */
     #[Flow\InjectConfiguration("nodeTypes.presets.properties", "Neos.Neos")]
-    protected array|null $presetConfiguration;
+    protected array|null $presetConfiguration = null;
 
     /** @var array<string, mixed>|null */
     #[Flow\InjectConfiguration("userInterface.inspector.dataTypes", "Neos.Neos")]
-    protected array|null $typeConfiguration;
+    protected array|null $typeConfiguration = null;
 
     /**
      * @param array<int, string> $input
@@ -111,11 +111,9 @@ class PropertySpecificationFactory
         }
 
         if (is_array($this->presetConfiguration)) {
-            if (is_array($this->presetConfiguration)) {
-                $presetPathes = ConfigurationUtility::findConfigurationPathesByKey($this->presetConfiguration, 'type');
-                foreach ($presetPathes as $presetPathe) {
-                    $options[] = 'preset.' . $presetPathe;
-                }
+            $presetPathes = ConfigurationUtility::findConfigurationPathesByKey($this->presetConfiguration, 'type');
+            foreach ($presetPathes as $presetPathe) {
+                $options[] = 'preset.' . $presetPathe;
             }
         }
 
