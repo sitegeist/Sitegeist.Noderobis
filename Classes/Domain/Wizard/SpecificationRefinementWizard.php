@@ -56,7 +56,8 @@ class SpecificationRefinementWizard
             "add Property",
             "add ChildNode",
             "add SuperType",
-            "add Mixin"
+            "add Mixin",
+            "add Constraint"
         ];
 
         if ($nodeTypeSpecification->abstract) {
@@ -110,6 +111,9 @@ class SpecificationRefinementWizard
                 return $this->refineSpecification($nodeTypeSpecification);
             case "add Mixin":
                 $nodeTypeSpecification = $this->addMixinToNodeTypeSpecification($nodeTypeSpecification);
+                return $this->refineSpecification($nodeTypeSpecification);
+            case "add Constraint":
+                $nodeTypeSpecification = $this->addConstraintToNodeTypeSpecification($nodeTypeSpecification);
                 return $this->refineSpecification($nodeTypeSpecification);
             case "make Abstract":
                 $nodeTypeSpecification = $nodeTypeSpecification->withAbstract(true);
@@ -169,6 +173,17 @@ class SpecificationRefinementWizard
     protected function addMixinToNodeTypeSpecification(NodeTypeSpecification $nodeTypeSpecification): NodeTypeSpecification
     {
         $name = $this->output->select("Mixin: ", $this->nodeTypeNameSpecificationFactory->getExistingMixinNodeTypeNames());
+        if (is_string($name)) {
+            $nodeTypeName = NodeTypeNameSpecification::fromString($name);
+            return $nodeTypeSpecification->withSuperType($nodeTypeName);
+        } else {
+            return $nodeTypeSpecification;
+        }
+    }
+
+    protected function addConstraintToNodeTypeSpecification(NodeTypeSpecification $nodeTypeSpecification): NodeTypeSpecification
+    {
+        $name = $this->output->select("Constraint: ", $this->nodeTypeNameSpecificationFactory->getExistingConstraintNodeTypeNames());
         if (is_string($name)) {
             $nodeTypeName = NodeTypeNameSpecification::fromString($name);
             return $nodeTypeSpecification->withSuperType($nodeTypeName);
