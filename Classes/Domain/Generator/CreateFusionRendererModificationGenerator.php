@@ -40,7 +40,7 @@ class CreateFusionRendererModificationGenerator implements ModificationGenerator
 
         if ($fusionCode) {
             $nodeTypeNameSpecification = NodeTypeNameSpecification::fromString($nodeType->getName());
-            $filePath = $package->getPackagePath() . 'NodeTypes/' . implode('/', $nodeTypeNameSpecification->getLocalNameParts()) . '.fusion';
+            $filePath = $package->getPackagePath() . 'NodeTypes/' . implode('/', $nodeTypeNameSpecification->getLocalNameParts()) . '/' . $nodeTypeNameSpecification->getNickname() . '.fusion';
             return new WriteFileModification($filePath, $fusionCode);
         } else {
             return new DoNothingModification();

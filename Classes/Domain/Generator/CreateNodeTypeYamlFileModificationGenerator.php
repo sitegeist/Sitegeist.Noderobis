@@ -42,7 +42,7 @@ class CreateNodeTypeYamlFileModificationGenerator implements ModificationGenerat
         $configuration = array_merge($configuration, $nodeType->getLocalConfiguration());
 
         $nodeTypeNameSpecification = NodeTypeNameSpecification::fromString($nodeType->getName());
-        $filePath = $package->getPackagePath()  . 'NodeTypes/' . implode('/', $nodeTypeNameSpecification->getLocalNameParts()) . '.yaml';
+        $filePath = $package->getPackagePath()  . 'NodeTypes/' . implode('/', $nodeTypeNameSpecification->getLocalNameParts()) . '/' . $nodeTypeNameSpecification->getNickname() . '.yaml';
         return new WriteFileModification(
             $filePath,
             $nodeTypeComment . chr(10) . Yaml::dump([ $nodeType->getName() => $configuration], 99, 2)

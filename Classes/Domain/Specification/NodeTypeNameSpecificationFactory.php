@@ -48,4 +48,20 @@ class NodeTypeNameSpecificationFactory
 
         return $options;
     }
+
+    /**
+     * @return array<int, string>
+     */
+    public function getExistingConstraintNodeTypeNames(): array
+    {
+        $options = [];
+
+        foreach ($this->nodeTypeManager->getNodeTypes(true) as $nodeType) {
+            if ($nodeType->isAbstract() && strpos($nodeType->getName(), 'Constraint') !== false) {
+                $options[] = $nodeType->getName();
+            }
+        }
+
+        return $options;
+    }
 }
