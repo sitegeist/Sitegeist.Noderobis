@@ -127,6 +127,42 @@ Sitegeist:
         afx: '{props.###NAME### ? "true" : "false"}'
 ```
 
+### Configuration to support Sitegeist.Kaleidoscope
+
+The following Settings.yaml adjusts the generated code for `Neos\Media\Domain\Model\ImageInterface` props
+to use the [Sitegeist.Kaleidoscope](https://github.com/sitegeist/Sitegeist.Kaleidoscope) package.
+
+```yaml
+Sitegeist:
+  Noderobis:
+    properties:
+
+      # Adjust generation of Image props to render using Sitegeist.Kaleidoscope
+      # with fallback to a dummy image in backend
+      'Neos\Media\Domain\Model\ImageInterface':
+        prop: |
+          ###NAME### = Neos.Fusion:Case {
+              image {
+                  condition = ${q(node).property('###NAME###')}
+                  renderer = Sitegeist.Kaleidoscope:AssetImageSource {
+                      asset = ${q(node).property('###NAME###')}
+                      # @todo !!! ensure property ###NAME###Title really exists
+                      title = ${q(node).property('###NAME###Title')}
+                      # @todo !!! ensure property ###NAME###Alt really exists
+                      alt = ${q(node).property('###NAME###Alt')}
+                  }
+              }
+              dummyImage {
+                  condition = ${node.context.inBackend}
+                  renderer = Sitegeist.Kaleidoscope:DummyImageSource {
+                      alt = "dummy"
+                      title = "image"
+                  }
+              }
+          }
+        afx: '<Sitegeist.Kaleidoscope:Image imageSource={props.###NAME###} />'
+```
+
 ## How it works
 
 The package will firstly use the cli process to generate a `NodeTypeSpecification` value-object. 
