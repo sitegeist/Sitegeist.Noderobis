@@ -19,9 +19,13 @@ class CreateNodeTypeYamlFileModificationGenerator implements ModificationGenerat
 {
     public function generateModification(FlowPackageInterface $package, NodeType $nodeType): ModificationInterface
     {
+        $cliCommand = $nodeType->getConfiguration('options.noderobis.cliCommand')
+            ? 'created via: ' . $nodeType->getConfiguration('options.noderobis.cliCommand')
+            : '';
         $nodeTypeComment = <<<EOT
             #
             # Definition of NodeType {$nodeType->getName()}
+            # {$cliCommand}
             #
             # @see https://docs.neos.io/cms/manual/content-repository/nodetype-definition
             # @see https://docs.neos.io/cms/manual/content-repository/nodetype-properties

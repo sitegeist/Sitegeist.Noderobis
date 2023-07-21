@@ -50,15 +50,18 @@ class CreateFusionRendererModificationGenerator implements ModificationGenerator
     protected function createDocumentFusionPrototype(FlowPackageInterface $package, NodeType $nodeType): string
     {
         $name = $nodeType->getName();
-        $packagePath = $package->getPackagePath();
 
         $propertyAcessors = $this->generatePropertyAccessors($nodeType);
         $propertyRenderers = $this->generatePropertyRenderers($nodeType);
         $childNodeRenderer = $this->generateChildrenAfxRenderer($nodeType);
+        $cliCommand = $nodeType->getConfiguration('options.noderobis.cliCommand')
+            ? 'created via: ' . $nodeType->getConfiguration('options.noderobis.cliCommand')
+            : '';
 
         $fusionCode = <<<EOT
             #
             # Renderer for NodeType {$name}
+            # {$cliCommand}
             #
             # @see https://docs.neos.io/cms/manual/rendering
             #
@@ -90,10 +93,14 @@ class CreateFusionRendererModificationGenerator implements ModificationGenerator
         $propertyAcessors = $this->generatePropertyAccessors($nodeType);
         $propertyRenderers = $this->generatePropertyRenderers($nodeType);
         $childNodeRenderer = $this->generateChildrenAfxRenderer($nodeType);
+        $cliCommand = $nodeType->getConfiguration('options.noderobis.cliCommand')
+            ? 'created via: ' . $nodeType->getConfiguration('options.noderobis.cliCommand')
+            : '';
 
         $fusionCode = <<<EOT
             #
             # Renderer for NodeType {$name}
+            # {$cliCommand}
             #
             # @see https://docs.neos.io/cms/manual/rendering
             #
