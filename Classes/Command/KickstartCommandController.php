@@ -69,7 +69,7 @@ class KickstartCommandController extends CommandController
      */
     public function documentCommand(string $name, ?string $packageKey = null, array $superType = [], array $childNode = [], array $property = [], ?string $icon = null, ?string $label = null, ?bool $abstract = null, bool $yes = false): void
     {
-        $this->nodetypeCommand(BaseType::Document, $name, $packageKey, $superType, $childNode, $property, $icon, $label,$abstract, $yes);
+        $this->nodetypeCommand(BaseType::Document, $name, $packageKey, $superType, $childNode, $property, $icon, $label, $abstract, $yes);
     }
 
     /**
@@ -116,7 +116,7 @@ class KickstartCommandController extends CommandController
     /**
      * @phpstan-param array<int, string> $property
      * @phpstan-param array<int, string> $childNode
-     * @phpstan-param array<int, string> $mixin
+     * @phpstan-param array<int, string> $superType
      *
      * @param BaseType $baseType Base type (Content, Document or Mixin)
      * @param string $name Node Name, last part of NodeType
@@ -145,7 +145,7 @@ class KickstartCommandController extends CommandController
             $this->propertySpecificationFactory->generatePropertySpecificationCollectionFromCliInputArray($property),
             $this->tetheredNodeSpecificationFactory->generateTetheredNodeSpecificationCollectionFromCliInputArray($childNode),
             is_bool($abstract) ? $abstract : !($primarySuperType && ($primarySuperType->isOfType('Neos.Neos:Document') || $primarySuperType->isOfType('Neos.Neos:Content'))),
-            $label ? new NodeTypeLabelSpecification($label): null,
+            $label ? new NodeTypeLabelSpecification($label) : null,
             $icon ? new IconNameSpecification($icon) : null,
         );
 
@@ -180,21 +180,19 @@ class KickstartCommandController extends CommandController
             $this->quit(1);
         }
 
-        $cliArguments = $nodeType->getConfiguration('options.noderobis.cli');
+        $cliCommandConfiguration = $nodeType->getConfiguration('options.noderobis.cli');
 
-        if (!$cliArguments) {
-            $this->outputLine('configuration  options.noderobis.cliArguments was not found in NodeType ' . $nodeType);
+        if (!is_array($cliCommandConfiguration)) {
+            $this->outputLine('configuration "options.noderobis.cliArguments" was not found in NodeType ' . $nodeType);
             $this->quit(1);
         }
 
-        $command = $cliArguments['command'];
-        $arguments = $cliArguments['arguments'] ?? [];
+        $cliCommand = CliCommand::fromConfiguration($cliCommandConfiguration);
 
         $this->forward(
-            $command,
+            $cliCommand->command,
             'Sitegeist\\Noderobis\\Command\\KickstartCommandController',
-            $arguments
+            $cliCommand->arguments
         );
-
     }
 }

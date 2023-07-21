@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Sitegeist\Noderobis\Domain\Specification;
@@ -13,7 +14,7 @@ class CliCommand
      */
     public function __construct(
         public readonly string $command,
-        public readonly array  $arguments = []
+        public readonly array $arguments = []
     ) {
     }
 
@@ -23,7 +24,7 @@ class CliCommand
         $arguments = [];
 
         $nameArgument = $nodeTypeSpecification->name->localName;
-        if (str_starts_with( $nameArgument, $baseType->value . '.')) {
+        if (str_starts_with($nameArgument, $baseType->value . '.')) {
             $nameArgument = preg_replace('/^' . preg_quote($baseType->value . '.', '/') . '/', '', $nameArgument);
         }
         $arguments['name'] = $nameArgument;
@@ -58,7 +59,8 @@ class CliCommand
         }
 
         if ($nodeTypeSpecification->icon) {
-            $arguments['icon'] = $nodeTypeSpecification->icon->name;;
+            $arguments['icon'] = $nodeTypeSpecification->icon->name;
+            ;
         }
 
         if ($nodeTypeSpecification->label) {
@@ -88,6 +90,9 @@ class CliCommand
         return $command;
     }
 
+    /**
+     * @return array{'command':string, 'arguments':mixed[]}
+     */
     public function asArray(): array
     {
         return [
@@ -96,4 +101,18 @@ class CliCommand
         ];
     }
 
+    /**
+     * @param mixed $config
+     */
+    public static function fromConfiguration(mixed $config): static
+    {
+        if (is_array($config) && array_key_exists('command', $config)) {
+            return new static(
+                $config['command'],
+                $config['arguments'] ?? []
+            );
+        } else {
+            throw new \InvalidArgumentException('Not a valid cli command config');
+        }
+    }
 }
