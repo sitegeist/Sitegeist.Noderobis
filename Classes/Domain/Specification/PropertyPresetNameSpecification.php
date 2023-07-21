@@ -16,6 +16,6 @@ class PropertyPresetNameSpecification
 
     public function __toString(): string
     {
-        return 'preset:' . $this->presetName;
+        return 'preset.' . $this->presetName;
     }
 }
