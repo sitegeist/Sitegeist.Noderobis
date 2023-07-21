@@ -17,15 +17,16 @@ use Symfony\Component\Yaml\Yaml;
 
 class CreateNodeTypeYamlFileModificationGenerator implements ModificationGeneratorInterface
 {
+    use CliCommandInfoTrait;
+
     public function generateModification(FlowPackageInterface $package, NodeType $nodeType): ModificationInterface
     {
-        $cliCommand = $nodeType->getConfiguration('options.noderobis.cliCommand')
-            ? 'created via: ' . $nodeType->getConfiguration('options.noderobis.cliCommand')
-            : '';
+        $cliCommandInfo = $this->createCliCommandInfoForNodeType($nodeType);
+
         $nodeTypeComment = <<<EOT
             #
             # Definition of NodeType {$nodeType->getName()}
-            # {$cliCommand}
+            # {$cliCommandInfo}
             #
             # @see https://docs.neos.io/cms/manual/content-repository/nodetype-definition
             # @see https://docs.neos.io/cms/manual/content-repository/nodetype-properties

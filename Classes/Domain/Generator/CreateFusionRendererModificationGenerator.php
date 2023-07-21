@@ -19,6 +19,8 @@ use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 
 class CreateFusionRendererModificationGenerator implements ModificationGeneratorInterface
 {
+    use CliCommandInfoTrait;
+
     #[Flow\Inject]
     protected NodeTypeManager $nodeTypeManager;
 
@@ -54,14 +56,12 @@ class CreateFusionRendererModificationGenerator implements ModificationGenerator
         $propertyAcessors = $this->generatePropertyAccessors($nodeType);
         $propertyRenderers = $this->generatePropertyRenderers($nodeType);
         $childNodeRenderer = $this->generateChildrenAfxRenderer($nodeType);
-        $cliCommand = $nodeType->getConfiguration('options.noderobis.cliCommand')
-            ? 'created via: ' . $nodeType->getConfiguration('options.noderobis.cliCommand')
-            : '';
+        $cliCommandInfo = $this->createCliCommandInfoForNodeType($nodeType);
 
         $fusionCode = <<<EOT
             #
             # Renderer for NodeType {$name}
-            # {$cliCommand}
+            # {$cliCommandInfo}
             #
             # @see https://docs.neos.io/cms/manual/rendering
             #
@@ -93,14 +93,12 @@ class CreateFusionRendererModificationGenerator implements ModificationGenerator
         $propertyAcessors = $this->generatePropertyAccessors($nodeType);
         $propertyRenderers = $this->generatePropertyRenderers($nodeType);
         $childNodeRenderer = $this->generateChildrenAfxRenderer($nodeType);
-        $cliCommand = $nodeType->getConfiguration('options.noderobis.cliCommand')
-            ? 'created via: ' . $nodeType->getConfiguration('options.noderobis.cliCommand')
-            : '';
+        $cliCommandInfo = $this->createCliCommandInfoForNodeType($nodeType);
 
         $fusionCode = <<<EOT
             #
             # Renderer for NodeType {$name}
-            # {$cliCommand}
+            # {$cliCommandInfo}
             #
             # @see https://docs.neos.io/cms/manual/rendering
             #

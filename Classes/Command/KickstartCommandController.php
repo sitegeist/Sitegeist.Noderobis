@@ -9,10 +9,13 @@ declare(strict_types=1);
 namespace Sitegeist\Noderobis\Command;
 
 use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
+use Neos\Flow\Cli\CommandManager;
 use Sitegeist\Noderobis\Domain\Generator\NodeTypeGenerator;
 use Sitegeist\Noderobis\Domain\Specification\BaseType;
+use Sitegeist\Noderobis\Domain\Specification\CliCommand;
 use Sitegeist\Noderobis\Domain\Specification\IconNameSpecification;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeLabelSpecification;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeNameSpecificationFactory;
@@ -26,7 +29,6 @@ use Sitegeist\Noderobis\Domain\Specification\TetheredNodeSpecification;
 use Sitegeist\Noderobis\Domain\Specification\TetheredNodeSpecificationFactory;
 use Sitegeist\Noderobis\Domain\Wizard\DeterminePrimarySuperTypeWizard;
 use Sitegeist\Noderobis\Domain\Wizard\GenerateCodeWizard;
-use Sitegeist\Noderobis\Domain\Wizard\GenerateNodeTypeWizard;
 use Sitegeist\Noderobis\Domain\Wizard\SpecificationRefinementWizard;
 use Sitegeist\Noderobis\Domain\Wizard\DetermineFlowPackageWizard;
 
@@ -44,6 +46,9 @@ class KickstartCommandController extends CommandController
 
     #[Flow\Inject]
     protected NodeTypeNameSpecificationFactory $nodeTypeNameSpecificationFactory;
+
+    #[Flow\Inject]
+    protected NodeTypeManager $nodeTypeManager;
 
     /**
      * @phpstan-param array<int, string> $property
@@ -152,8 +157,9 @@ class KickstartCommandController extends CommandController
         $this->output->outputLine();
         $this->output->outputLine($nodeTypeSpecification->__toString());
 
+        $cliCommand = CliCommand::create($baseType, $primarySuperType, $nodeTypeSpecification);
         $optionsSpecification = $nodeTypeSpecification->optionsSpecification ?? new OptionsSpecification([]);
-        $optionsSpecification = $optionsSpecification->withOption('noderobis.cliCommand', $this->createCliCommandForLaterRestarting($baseType, $primarySuperType, $nodeTypeSpecification));
+        $optionsSpecification = $optionsSpecification->withOption('noderobis.cli', $cliCommand->asArray());
         $nodeTypeSpecification = $nodeTypeSpecification->withOptionsSpecification($optionsSpecification);
 
         $nodeType = $this->nodeTypeGenerator->generateNodeType($nodeTypeSpecification);
@@ -162,55 +168,33 @@ class KickstartCommandController extends CommandController
         $generateCodeWizard->generateCode($nodeType, $package, $yes);
     }
 
-    protected function createCliCommandForLaterRestarting(BaseType $baseType, ?NodeType $primarySuperType, NodeTypeSpecification $nodeTypeSpecification): string
+    /**
+     * @param string $nodeType
+     * @return void
+     */
+    public function refineCommand(string $nodeType): void
     {
-        $command = './flow kickstart:' . strtolower($baseType->value);
-
-        $nameArgument = $nodeTypeSpecification->name->localName;
-        if (str_starts_with( $nameArgument, $baseType->value . '.')) {
-            $nameArgument = preg_replace('/^' . preg_quote($baseType->value . '.', '/') . '/', '', $nameArgument);
-        }
-        $command .= ' --name ' . $nameArgument;
-
-        $command .= ' --packageKey ' . $nodeTypeSpecification->name->packageKey;
-
-        /**
-         * @var NodeTypeNameSpecification $superType
-         */
-        foreach ($nodeTypeSpecification->superTypes->getIterator() as $superType) {
-            if ($primarySuperType && $primarySuperType->getName() === $superType->getFullName()) {
-                continue;
-            }
-
-            $command .= ' --superType ' . $superType;
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeType);
+        if (!$nodeType instanceof NodeType) {
+            $this->outputLine('NodeType ' . $nodeType . ' not found');
+            $this->quit(1);
         }
 
-        /**
-         * @var PropertySpecification $propertySpecification
-         */
-        foreach ($nodeTypeSpecification->nodeProperties->getIterator() as $propertySpecification) {
-            $command .= ' --property ' . $propertySpecification;
+        $cliArguments = $nodeType->getConfiguration('options.noderobis.cli');
+
+        if (!$cliArguments) {
+            $this->outputLine('configuration  options.noderobis.cliArguments was not found in NodeType ' . $nodeType);
+            $this->quit(1);
         }
 
-        /**
-         * @var TetheredNodeSpecification $tetheredNode
-         */
-        foreach ($nodeTypeSpecification->tetheredNodes->getIterator() as $tetheredNode) {
-            $command .= ' --childNode ' . $tetheredNode;
-        }
+        $command = $cliArguments['command'];
+        $arguments = $cliArguments['arguments'] ?? [];
 
-        if ($nodeTypeSpecification->abstract) {
-            $command .= ' --abstract';
-        }
+        $this->forward(
+            $command,
+            'Sitegeist\\Noderobis\\Command\\KickstartCommandController',
+            $arguments
+        );
 
-        if ($nodeTypeSpecification->icon) {
-            $command .= ' --icon ' . $nodeTypeSpecification->icon->name;
-        }
-
-        if ($nodeTypeSpecification->label) {
-            $command .= ' --label ' . $nodeTypeSpecification->label->label;
-        }
-
-        return $command;
     }
 }
