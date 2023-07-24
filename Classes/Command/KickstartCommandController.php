@@ -50,6 +50,8 @@ class KickstartCommandController extends CommandController
     #[Flow\Inject]
     protected NodeTypeManager $nodeTypeManager;
 
+    public const OPTION_PATH = 'noderobis.__cliInternal';
+
     /**
      * @phpstan-param array<int, string> $property
      * @phpstan-param array<int, string> $childNode
@@ -159,7 +161,8 @@ class KickstartCommandController extends CommandController
 
         $cliCommand = CliCommand::create($baseType, $primarySuperType, $nodeTypeSpecification);
         $optionsSpecification = $nodeTypeSpecification->optionsSpecification ?? new OptionsSpecification([]);
-        $optionsSpecification = $optionsSpecification->withOption('noderobis.cli', $cliCommand->asArray());
+        $optionsSpecification = $optionsSpecification->withOption(static::OPTION_PATH, json_encode($cliCommand->asArray()));
+
         $nodeTypeSpecification = $nodeTypeSpecification->withOptionsSpecification($optionsSpecification);
 
         $nodeType = $this->nodeTypeGenerator->generateNodeType($nodeTypeSpecification);
@@ -180,10 +183,18 @@ class KickstartCommandController extends CommandController
             $this->quit(1);
         }
 
-        $cliCommandConfiguration = $nodeType->getConfiguration('options.noderobis.cli');
+        $cliSetting = $nodeType->getConfiguration('options.' . static::OPTION_PATH);
+
+        if (!is_string($cliSetting)) {
+            $this->outputLine(sprintf('configuration option "%s" was not found in NodeType "%s"', static::OPTION_PATH, $nodeType));
+            $this->quit(1);
+            return;
+        }
+
+        $cliCommandConfiguration = json_decode($cliSetting, true);
 
         if (!is_array($cliCommandConfiguration)) {
-            $this->outputLine('configuration "options.noderobis.cliArguments" was not found in NodeType ' . $nodeType);
+            $this->outputLine(sprintf('configuration option "%s" was in expected format in NodeType "%s"', static::OPTION_PATH, $nodeType));
             $this->quit(1);
         }
 

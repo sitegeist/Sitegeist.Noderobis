@@ -60,7 +60,6 @@ class CliCommand
 
         if ($nodeTypeSpecification->icon) {
             $arguments['icon'] = $nodeTypeSpecification->icon->name;
-            ;
         }
 
         if ($nodeTypeSpecification->label) {
@@ -75,7 +74,7 @@ class CliCommand
 
     public function asString(): string
     {
-        $command = './flow ' . $this->command;
+        $command = './flow kickstart:' . $this->command;
         foreach ($this->arguments as $argumentName => $value) {
             if (is_string($value)) {
                 $command .= ' --' . $argumentName . ' ' . $value;
