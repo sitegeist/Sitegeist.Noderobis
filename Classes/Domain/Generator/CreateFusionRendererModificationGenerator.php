@@ -19,6 +19,8 @@ use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 
 class CreateFusionRendererModificationGenerator implements ModificationGeneratorInterface
 {
+    use CliCommandInfoTrait;
+
     #[Flow\Inject]
     protected NodeTypeManager $nodeTypeManager;
 
@@ -50,15 +52,16 @@ class CreateFusionRendererModificationGenerator implements ModificationGenerator
     protected function createDocumentFusionPrototype(FlowPackageInterface $package, NodeType $nodeType): string
     {
         $name = $nodeType->getName();
-        $packagePath = $package->getPackagePath();
 
         $propertyAcessors = $this->generatePropertyAccessors($nodeType);
         $propertyRenderers = $this->generatePropertyRenderers($nodeType);
         $childNodeRenderer = $this->generateChildrenAfxRenderer($nodeType);
+        $cliCommandInfo = $this->createCliCommandInfoForNodeType($nodeType);
 
         $fusionCode = <<<EOT
             #
             # Renderer for NodeType {$name}
+            # {$cliCommandInfo}
             #
             # @see https://docs.neos.io/cms/manual/rendering
             #
@@ -90,10 +93,12 @@ class CreateFusionRendererModificationGenerator implements ModificationGenerator
         $propertyAcessors = $this->generatePropertyAccessors($nodeType);
         $propertyRenderers = $this->generatePropertyRenderers($nodeType);
         $childNodeRenderer = $this->generateChildrenAfxRenderer($nodeType);
+        $cliCommandInfo = $this->createCliCommandInfoForNodeType($nodeType);
 
         $fusionCode = <<<EOT
             #
             # Renderer for NodeType {$name}
+            # {$cliCommandInfo}
             #
             # @see https://docs.neos.io/cms/manual/rendering
             #
