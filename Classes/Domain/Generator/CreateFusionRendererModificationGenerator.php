@@ -8,14 +8,14 @@ declare(strict_types=1);
 
 namespace Sitegeist\Noderobis\Domain\Generator;
 
+use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\Flow\Package\FlowPackageInterface;
 use Sitegeist\Noderobis\Domain\Modification\WriteFileModification;
 use Sitegeist\Noderobis\Domain\Modification\DoNothingModification;
 use Sitegeist\Noderobis\Domain\Modification\ModificationInterface;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeNameSpecification;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 
 class CreateFusionRendererModificationGenerator implements ModificationGeneratorInterface
 {

@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace Sitegeist\Noderobis\Domain\Wizard;
 
-use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\ConsoleOutput;
 use Neos\Flow\Cli\Exception\StopCommandException;
@@ -20,9 +20,7 @@ use Sitegeist\Noderobis\Domain\Generator\CreateFusionRendererModificationGenerat
 use Sitegeist\Noderobis\Domain\Generator\CreateNodeTypeYamlFileModificationGenerator;
 use Sitegeist\Noderobis\Domain\Generator\IncludeFusionFromNodeTypesModificationGenerator;
 use Sitegeist\Noderobis\Domain\Generator\ModificationGeneratorInterface;
-use Sitegeist\Noderobis\Domain\Generator\NodeTypeGenerator;
 use Sitegeist\Noderobis\Domain\Modification\ModificationCollection;
-use Sitegeist\Noderobis\Domain\Specification\NodeTypeSpecification;
 
 class GenerateCodeWizard
 {

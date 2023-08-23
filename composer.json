@@ -15,8 +15,8 @@
         }
     ],
     "require": {
-        "php": "^8.1",
-        "neos/neos": "~8.0 || dev-8.2.x-dev || dev-main || dev-master"
+        "php": "^8.2",
+        "neos/neos": "^9.0 || dev-main || dev-master"
     },
     "autoload": {
         "psr-4": {

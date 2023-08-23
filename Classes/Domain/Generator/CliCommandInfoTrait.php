@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Sitegeist\Noderobis\Domain\Generator;
 
-use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeType;
 use Sitegeist\Noderobis\Command\KickstartCommandController;
 use Sitegeist\Noderobis\Domain\Specification\CliCommand;
 

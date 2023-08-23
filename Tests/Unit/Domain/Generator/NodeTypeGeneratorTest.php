@@ -3,16 +3,15 @@ declare(strict_types=1);
 
 namespace Sitegeist\Noderobis\Tests\Unit\Domain\Generator;
 
-use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
-use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use PHPUnit\Framework\MockObject\MockObject;
 use Sitegeist\Noderobis\Domain\Generator\NodeTypeGenerator;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeNameSpecification;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeNameSpecificationCollection;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeSpecification;
 use Sitegeist\Noderobis\Domain\Specification\OptionsSpecification;
-use Sitegeist\Noderobis\Domain\Specification\PropertySpecification;
 use Sitegeist\Noderobis\Domain\Specification\PropertySpecificationCollection;
 use Sitegeist\Noderobis\Domain\Specification\PropertySpecificationFactory;
 use Sitegeist\Noderobis\Domain\Specification\TetheredNodeSpecificationCollection;

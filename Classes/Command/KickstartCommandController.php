@@ -8,8 +8,8 @@ declare(strict_types=1);
 
 namespace Sitegeist\Noderobis\Command;
 
-use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Cli\CommandManager;
@@ -21,11 +21,9 @@ use Sitegeist\Noderobis\Domain\Specification\NodeTypeLabelSpecification;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeNameSpecificationFactory;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeNameSpecification;
 use Sitegeist\Noderobis\Domain\Specification\OptionsSpecification;
-use Sitegeist\Noderobis\Domain\Specification\PropertySpecification;
 use Sitegeist\Noderobis\Domain\Specification\PropertySpecificationFactory;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeNameSpecificationCollection;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeSpecification;
-use Sitegeist\Noderobis\Domain\Specification\TetheredNodeSpecification;
 use Sitegeist\Noderobis\Domain\Specification\TetheredNodeSpecificationFactory;
 use Sitegeist\Noderobis\Domain\Wizard\DeterminePrimarySuperTypeWizard;
 use Sitegeist\Noderobis\Domain\Wizard\GenerateCodeWizard;
