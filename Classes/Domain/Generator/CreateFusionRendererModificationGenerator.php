@@ -126,6 +126,7 @@ class CreateFusionRendererModificationGenerator implements ModificationGenerator
     {
         $propertyRenderers = [];
         foreach ($nodeType->getProperties() as $name => $propertyConfiguration) {
+            /** @phpstan-var array<string,string|array<string,mixed>> $propertyConfiguration */
             $name = (string) $name;
             if (str_starts_with($name, '_')) {
                 continue;
@@ -134,7 +135,9 @@ class CreateFusionRendererModificationGenerator implements ModificationGenerator
             if ($propertyConfiguration['ui']['inlineEditable'] ?? false) {
                 $afx = $this->propertyRendererConfiguration['inlineEditable']['afx'] ?? $this->propertyRendererConfiguration['default']['afx'];
             } else {
-                $afx = $this->propertyRendererConfiguration[$propertyConfiguration['type']]['afx'] ?? $this->propertyRendererConfiguration['default']['afx'];
+                /** @var string $type */
+                $type = $propertyConfiguration['type'];
+                $afx = $this->propertyRendererConfiguration[$type]['afx'] ?? $this->propertyRendererConfiguration['default']['afx'];
             }
             $propertyRenderers[] = '<dt>' . $name . '</dt><dd>' . str_replace('###NAME###', $name, $afx) . '</dd>';
         }
@@ -151,6 +154,7 @@ class CreateFusionRendererModificationGenerator implements ModificationGenerator
         $propertyAcessorList = [];
 
         foreach ($nodeType->getProperties() as $name => $propertyConfiguration) {
+            /** @phpstan-var array<string,string|array<string,mixed>> $propertyConfiguration */
             $name = (string) $name;
             if (str_starts_with($name, '_')) {
                 continue;
@@ -159,7 +163,9 @@ class CreateFusionRendererModificationGenerator implements ModificationGenerator
             if ($propertyConfiguration['ui']['inlineEditable'] ?? false) {
                 $prop = $this->propertyRendererConfiguration['inlineEditable']['prop'] ?? $this->propertyRendererConfiguration['default']['prop'];
             } else {
-                $prop = $this->propertyRendererConfiguration[$propertyConfiguration['type']]['prop'] ?? $this->propertyRendererConfiguration['default']['prop'];
+                /** @var string $type */
+                $type = $propertyConfiguration['type'];
+                $prop = $this->propertyRendererConfiguration[$type]['prop'] ?? $this->propertyRendererConfiguration['default']['prop'];
             }
             $propertyAcessorList[] =  str_replace('###NAME###', $name, $prop);
         }

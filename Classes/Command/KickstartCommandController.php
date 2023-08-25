@@ -12,7 +12,6 @@ use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
-use Neos\Flow\Cli\CommandManager;
 use Sitegeist\Noderobis\Domain\Generator\NodeTypeGenerator;
 use Sitegeist\Noderobis\Domain\Specification\BaseType;
 use Sitegeist\Noderobis\Domain\Specification\CliCommand;
@@ -184,7 +183,7 @@ class KickstartCommandController extends CommandController
         $cliSetting = $nodeType->getConfiguration('options.' . static::OPTION_PATH);
 
         if (!is_string($cliSetting)) {
-            $this->outputLine(sprintf('configuration option "%s" was not found in NodeType "%s"', static::OPTION_PATH, $nodeType));
+            $this->outputLine(sprintf('configuration option "%s" was not found in NodeType "%s"', static::OPTION_PATH, $nodeType->name->value));
             $this->quit(1);
             return;
         }
@@ -192,7 +191,7 @@ class KickstartCommandController extends CommandController
         $cliCommandConfiguration = json_decode($cliSetting, true);
 
         if (!is_array($cliCommandConfiguration)) {
-            $this->outputLine(sprintf('configuration option "%s" was in expected format in NodeType "%s"', static::OPTION_PATH, $nodeType));
+            $this->outputLine(sprintf('configuration option "%s" was in expected format in NodeType "%s"', static::OPTION_PATH, $nodeType->name->value));
             $this->quit(1);
         }
 
