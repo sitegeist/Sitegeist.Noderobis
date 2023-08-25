@@ -8,8 +8,12 @@ declare(strict_types=1);
 
 namespace Sitegeist\Noderobis\Domain\Generator;
 
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\NodeType\NodeLabelGeneratorFactoryInterface;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\Utility\Exception\InvalidTypeException;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeNameSpecification;
@@ -24,7 +28,20 @@ class NodeTypeGenerator implements NodeTypeGeneratorInterface
 {
     protected NodeTypeManager $nodeTypeManager;
 
-    public function injectNodeTypeManager(NodeTypeManager $nodeTypeManager): void
+    public function injectContentRepositoryRegistry(ContentRepositoryRegistry $crRegistry): void
+    {
+        $this->nodeTypeManager = $crRegistry->get(ContentRepositoryId::fromString('default'))->getNodeTypeManager();
+    }
+
+
+    protected NodeLabelGeneratorFactoryInterface $nodeLabelGeneratorFactory;
+
+    public function injectNodeLabelGeneratorFactory(NodeLabelGeneratorFactoryInterface $nodeLabelGeneratorFactory): void
+    {
+        $this->nodeLabelGeneratorFactory = $nodeLabelGeneratorFactory;
+    }
+
+    public function setNodeTypeManager(NodeTypeManager $nodeTypeManager): void
     {
         $this->nodeTypeManager = $nodeTypeManager;
     }
@@ -37,12 +54,15 @@ class NodeTypeGenerator implements NodeTypeGeneratorInterface
             ]
         ];
 
+        /**
+         * @var array<string,mixed> $superTypes
+         */
         $superTypes = [];
-        foreach ($nodeTypeSpecification->superTypes as $superTypeSpecification) {
+        foreach ($nodeTypeSpecification->superTypes as $key => $superTypeSpecification) {
             /** @var NodeType|null $superType */
             $superType = $this->nodeTypeManager->getNodeType($superTypeSpecification->getFullName());
             if ($superType instanceof NodeType) {
-                $superTypes[] = $superType;
+                $superTypes[$superType->name->value] = $superType;
             } else {
                 throw new \InvalidArgumentException(sprintf('Unknown supertype %s', $superTypeSpecification->getFullName()));
             }
@@ -107,7 +127,13 @@ class NodeTypeGenerator implements NodeTypeGeneratorInterface
         }
 
         # node type is created temporary to resolve presets and get access to inherited properties and groups
-        $nodeType = new NodeType($nodeTypeSpecification->name->getFullName(), $superTypes, $localConfiguration);
+        $nodeType = new NodeType(
+            NodeTypeName::fromString($nodeTypeSpecification->name->getFullName()),
+            $superTypes,
+            $localConfiguration,
+            $this->nodeTypeManager,
+            $this->nodeLabelGeneratorFactory
+        );
 
         # assign groups and reload if changed to  inspector properties
         foreach ($nodeTypeSpecification->nodeProperties as $nodeProperty) {
@@ -126,7 +152,13 @@ class NodeTypeGenerator implements NodeTypeGeneratorInterface
                         'icon' => 'file-alt',
                         'label' => $groupName
                     ];
-                    $nodeType = new NodeType($nodeTypeSpecification->name->getFullName(), $superTypes, $localConfiguration);
+                    $nodeType = new NodeType(
+                        NodeTypeName::fromString($nodeTypeSpecification->name->getFullName()),
+                        $superTypes,
+                        $localConfiguration,
+                        $this->nodeTypeManager,
+                        $this->nodeLabelGeneratorFactory
+                    );
                 }
                 $localConfiguration['properties'][$nodeProperty->name->name]['ui']['reloadIfChanged'] = true;
             }
@@ -151,7 +183,13 @@ class NodeTypeGenerator implements NodeTypeGeneratorInterface
             $localConfiguration['ui']['icon'] = 'question-circle';
         }
 
-        $nodeType = new NodeType($nodeTypeSpecification->name->getFullName(), $superTypes, $localConfiguration);
+        $nodeType = new NodeType(
+            NodeTypeName::fromString($nodeTypeSpecification->name->getFullName()),
+            $superTypes,
+            $localConfiguration,
+            $this->nodeTypeManager,
+            $this->nodeLabelGeneratorFactory
+        );
 
         return $nodeType;
     }

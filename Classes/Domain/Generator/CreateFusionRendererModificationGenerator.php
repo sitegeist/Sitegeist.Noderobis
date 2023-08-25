@@ -8,8 +8,10 @@ declare(strict_types=1);
 
 namespace Sitegeist\Noderobis\Domain\Generator;
 
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Package\FlowPackageInterface;
 use Sitegeist\Noderobis\Domain\Modification\WriteFileModification;
@@ -21,12 +23,16 @@ class CreateFusionRendererModificationGenerator implements ModificationGenerator
 {
     use CliCommandInfoTrait;
 
-    #[Flow\Inject]
-    protected NodeTypeManager $nodeTypeManager;
-
     /** @var array<string, array{afx:string, prop:string}> */
     #[Flow\InjectConfiguration("properties")]
     protected array $propertyRendererConfiguration;
+
+    protected NodeTypeManager $nodeTypeManager;
+
+    public function injectContentRepositoryRegistry(ContentRepositoryRegistry $crRegistry): void
+    {
+        $this->nodeTypeManager = $crRegistry->get(ContentRepositoryId::fromString('default'))->getNodeTypeManager();
+    }
 
     public function generateModification(FlowPackageInterface $package, NodeType $nodeType): ModificationInterface
     {

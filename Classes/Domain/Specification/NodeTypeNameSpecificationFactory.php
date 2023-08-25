@@ -4,13 +4,19 @@ declare(strict_types=1);
 
 namespace Sitegeist\Noderobis\Domain\Specification;
 
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 
 class NodeTypeNameSpecificationFactory
 {
-    #[Flow\Inject]
     protected NodeTypeManager $nodeTypeManager;
+
+    public function injectContentRepositoryRegistry(ContentRepositoryRegistry $crRegistry): void
+    {
+        $this->nodeTypeManager = $crRegistry->get(ContentRepositoryId::fromString('default'))->getNodeTypeManager();
+    }
 
     public function generateNodeTypeNameSpecificationFromCliInput(string $name): NodeTypeNameSpecification
     {

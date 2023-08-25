@@ -31,7 +31,7 @@
     "scripts": {
         "fix:style": "phpcbf --colors --standard=PSR12 Classes",
         "test:style": "phpcs --colors -n --standard=PSR12 Classes",
-        "test:stan": "phpstan analyse -l 9 Classes",
+        "test:stan": "phpstan analyse",
         "test:unit": "phpunit Tests/Unit",
         "cc": "phpstan clear cache",
         "test": ["composer install", "composer test:style" , "composer test:stan", "composer test:unit"]

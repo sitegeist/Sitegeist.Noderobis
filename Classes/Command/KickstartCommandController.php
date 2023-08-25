@@ -8,8 +8,10 @@ declare(strict_types=1);
 
 namespace Sitegeist\Noderobis\Command;
 
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Sitegeist\Noderobis\Domain\Generator\NodeTypeGenerator;
@@ -44,8 +46,12 @@ class KickstartCommandController extends CommandController
     #[Flow\Inject]
     protected NodeTypeNameSpecificationFactory $nodeTypeNameSpecificationFactory;
 
-    #[Flow\Inject]
     protected NodeTypeManager $nodeTypeManager;
+
+    public function injectContentRepositoryRegistry(ContentRepositoryRegistry $crRegistry): void
+    {
+        $this->nodeTypeManager = $crRegistry->get(ContentRepositoryId::fromString('default'))->getNodeTypeManager();
+    }
 
     public const OPTION_PATH = 'noderobis.__cliInternal';
 
