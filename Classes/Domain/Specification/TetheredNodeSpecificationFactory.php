@@ -5,15 +5,21 @@ declare(strict_types=1);
 namespace Sitegeist\Noderobis\Domain\Specification;
 
 use http\Exception\InvalidArgumentException;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\Arrays;
 use Sitegeist\Noderobis\Utility\ConfigurationUtility;
 
 class TetheredNodeSpecificationFactory
 {
-    #[Flow\Inject]
     protected NodeTypeManager $nodeTypeManager;
+
+    public function injectContentRepositoryRegistry(ContentRepositoryRegistry $crRegistry): void
+    {
+        $this->nodeTypeManager = $crRegistry->get(ContentRepositoryId::fromString('default'))->getNodeTypeManager();
+    }
 
     /** @var array<string, mixed>|null */
     #[Flow\InjectConfiguration("nodeTypes.presets.childNodes", "Neos.Neos")]

@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace Sitegeist\Noderobis\Domain\Generator;
 
-use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeType;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeSpecification;
 
 interface NodeTypeGeneratorInterface

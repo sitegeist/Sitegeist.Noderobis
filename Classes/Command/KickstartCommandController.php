@@ -8,11 +8,12 @@ declare(strict_types=1);
 
 namespace Sitegeist\Noderobis\Command;
 
-use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
-use Neos\Flow\Cli\CommandManager;
 use Sitegeist\Noderobis\Domain\Generator\NodeTypeGenerator;
 use Sitegeist\Noderobis\Domain\Specification\BaseType;
 use Sitegeist\Noderobis\Domain\Specification\CliCommand;
@@ -21,11 +22,9 @@ use Sitegeist\Noderobis\Domain\Specification\NodeTypeLabelSpecification;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeNameSpecificationFactory;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeNameSpecification;
 use Sitegeist\Noderobis\Domain\Specification\OptionsSpecification;
-use Sitegeist\Noderobis\Domain\Specification\PropertySpecification;
 use Sitegeist\Noderobis\Domain\Specification\PropertySpecificationFactory;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeNameSpecificationCollection;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeSpecification;
-use Sitegeist\Noderobis\Domain\Specification\TetheredNodeSpecification;
 use Sitegeist\Noderobis\Domain\Specification\TetheredNodeSpecificationFactory;
 use Sitegeist\Noderobis\Domain\Wizard\DeterminePrimarySuperTypeWizard;
 use Sitegeist\Noderobis\Domain\Wizard\GenerateCodeWizard;
@@ -47,8 +46,12 @@ class KickstartCommandController extends CommandController
     #[Flow\Inject]
     protected NodeTypeNameSpecificationFactory $nodeTypeNameSpecificationFactory;
 
-    #[Flow\Inject]
     protected NodeTypeManager $nodeTypeManager;
+
+    public function injectContentRepositoryRegistry(ContentRepositoryRegistry $crRegistry): void
+    {
+        $this->nodeTypeManager = $crRegistry->get(ContentRepositoryId::fromString('default'))->getNodeTypeManager();
+    }
 
     public const OPTION_PATH = 'noderobis.__cliInternal';
 
@@ -186,7 +189,7 @@ class KickstartCommandController extends CommandController
         $cliSetting = $nodeType->getConfiguration('options.' . static::OPTION_PATH);
 
         if (!is_string($cliSetting)) {
-            $this->outputLine(sprintf('configuration option "%s" was not found in NodeType "%s"', static::OPTION_PATH, $nodeType));
+            $this->outputLine(sprintf('configuration option "%s" was not found in NodeType "%s"', static::OPTION_PATH, $nodeType->name->value));
             $this->quit(1);
             return;
         }
@@ -194,7 +197,7 @@ class KickstartCommandController extends CommandController
         $cliCommandConfiguration = json_decode($cliSetting, true);
 
         if (!is_array($cliCommandConfiguration)) {
-            $this->outputLine(sprintf('configuration option "%s" was in expected format in NodeType "%s"', static::OPTION_PATH, $nodeType));
+            $this->outputLine(sprintf('configuration option "%s" was in expected format in NodeType "%s"', static::OPTION_PATH, $nodeType->name->value));
             $this->quit(1);
         }
 

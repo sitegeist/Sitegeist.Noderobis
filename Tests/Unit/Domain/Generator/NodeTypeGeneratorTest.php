@@ -3,16 +3,19 @@ declare(strict_types=1);
 
 namespace Sitegeist\Noderobis\Tests\Unit\Domain\Generator;
 
-use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
-use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\NodeType\DefaultNodeLabelGeneratorFactory;
+use Neos\ContentRepository\Core\NodeType\NodeLabelGeneratorFactoryInterface;
+use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use PHPUnit\Framework\MockObject\MockObject;
 use Sitegeist\Noderobis\Domain\Generator\NodeTypeGenerator;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeNameSpecification;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeNameSpecificationCollection;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeSpecification;
 use Sitegeist\Noderobis\Domain\Specification\OptionsSpecification;
-use Sitegeist\Noderobis\Domain\Specification\PropertySpecification;
 use Sitegeist\Noderobis\Domain\Specification\PropertySpecificationCollection;
 use Sitegeist\Noderobis\Domain\Specification\PropertySpecificationFactory;
 use Sitegeist\Noderobis\Domain\Specification\TetheredNodeSpecificationCollection;
@@ -23,13 +26,17 @@ class NodeTypeGeneratorTest extends BaseTestCase
 {
     protected NodeTypeGenerator $generator;
     protected NodeTypeManager|MockObject $mockNodeTypeManager;
+    protected DefaultNodeLabelGeneratorFactory $mockNodeLabelGeneratorFactory;
 
     public function setUp(): void
     {
+
         $this->mockNodeTypeManager = $this->createMock(NodeTypeManager::class);
+        $this->mockNodeLabelGeneratorFactory = new DefaultNodeLabelGeneratorFactory();
 
         $this->generator = new NodeTypeGenerator();
-        $this->generator->injectNodeTypeManager($this->mockNodeTypeManager);
+        $this->generator->setNodeTypeManager($this->mockNodeTypeManager);
+        $this->generator->injectNodeLabelGeneratorFactory( $this->mockNodeLabelGeneratorFactory);
     }
 
     /**
@@ -75,8 +82,8 @@ class NodeTypeGeneratorTest extends BaseTestCase
             superTypes: NodeTypeNameSpecificationCollection::fromStringArray(['Vendor.Package:SuperType.A', 'Vendor.Package:SuperType.B'])
         );
 
-        $superTypeA = new NodeType('Vendor.Package:SuperType.A', [], []);
-        $superTypeB = new NodeType('Vendor.Package:SuperType.B', [], []);
+        $superTypeA = new NodeType(NodeTypeName::fromString('Vendor.Package:SuperType.A'), [], [], $this->mockNodeTypeManager, $this->mockNodeLabelGeneratorFactory);
+        $superTypeB = new NodeType(NodeTypeName::fromString('Vendor.Package:SuperType.B'), [], [], $this->mockNodeTypeManager, $this->mockNodeLabelGeneratorFactory);
 
         $this->mockNodeTypeManager->expects($this->exactly(2))
             ->method('getNodeType')
@@ -86,7 +93,7 @@ class NodeTypeGeneratorTest extends BaseTestCase
         $nodetype = $this->generator->generateNodeType($specification);
 
         $this->assertInstanceOf(NodeType::class, $nodetype);
-        $this->assertSame([$superTypeA, $superTypeB], $nodetype->getDeclaredSuperTypes());
+        $this->assertSame(['Vendor.Package:SuperType.A' => $superTypeA, 'Vendor.Package:SuperType.B' => $superTypeB], $nodetype->getDeclaredSuperTypes());
     }
 
 

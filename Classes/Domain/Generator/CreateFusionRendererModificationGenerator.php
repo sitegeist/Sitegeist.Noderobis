@@ -8,25 +8,31 @@ declare(strict_types=1);
 
 namespace Sitegeist\Noderobis\Domain\Generator;
 
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\Flow\Package\FlowPackageInterface;
 use Sitegeist\Noderobis\Domain\Modification\WriteFileModification;
 use Sitegeist\Noderobis\Domain\Modification\DoNothingModification;
 use Sitegeist\Noderobis\Domain\Modification\ModificationInterface;
 use Sitegeist\Noderobis\Domain\Specification\NodeTypeNameSpecification;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 
 class CreateFusionRendererModificationGenerator implements ModificationGeneratorInterface
 {
     use CliCommandInfoTrait;
 
-    #[Flow\Inject]
-    protected NodeTypeManager $nodeTypeManager;
-
     /** @var array<string, array{afx:string, prop:string}> */
     #[Flow\InjectConfiguration("properties")]
     protected array $propertyRendererConfiguration;
+
+    protected NodeTypeManager $nodeTypeManager;
+
+    public function injectContentRepositoryRegistry(ContentRepositoryRegistry $crRegistry): void
+    {
+        $this->nodeTypeManager = $crRegistry->get(ContentRepositoryId::fromString('default'))->getNodeTypeManager();
+    }
 
     public function generateModification(FlowPackageInterface $package, NodeType $nodeType): ModificationInterface
     {
@@ -126,6 +132,7 @@ class CreateFusionRendererModificationGenerator implements ModificationGenerator
     {
         $propertyRenderers = [];
         foreach ($nodeType->getProperties() as $name => $propertyConfiguration) {
+            /** @phpstan-var array<string,string|array<string,mixed>> $propertyConfiguration */
             $name = (string) $name;
             if (str_starts_with($name, '_')) {
                 continue;
@@ -134,7 +141,9 @@ class CreateFusionRendererModificationGenerator implements ModificationGenerator
             if ($propertyConfiguration['ui']['inlineEditable'] ?? false) {
                 $afx = $this->propertyRendererConfiguration['inlineEditable']['afx'] ?? $this->propertyRendererConfiguration['default']['afx'];
             } else {
-                $afx = $this->propertyRendererConfiguration[$propertyConfiguration['type']]['afx'] ?? $this->propertyRendererConfiguration['default']['afx'];
+                /** @var string $type */
+                $type = $propertyConfiguration['type'];
+                $afx = $this->propertyRendererConfiguration[$type]['afx'] ?? $this->propertyRendererConfiguration['default']['afx'];
             }
             $propertyRenderers[] = '<dt>' . $name . '</dt><dd>' . str_replace('###NAME###', $name, $afx) . '</dd>';
         }
@@ -151,6 +160,7 @@ class CreateFusionRendererModificationGenerator implements ModificationGenerator
         $propertyAcessorList = [];
 
         foreach ($nodeType->getProperties() as $name => $propertyConfiguration) {
+            /** @phpstan-var array<string,string|array<string,mixed>> $propertyConfiguration */
             $name = (string) $name;
             if (str_starts_with($name, '_')) {
                 continue;
@@ -159,7 +169,9 @@ class CreateFusionRendererModificationGenerator implements ModificationGenerator
             if ($propertyConfiguration['ui']['inlineEditable'] ?? false) {
                 $prop = $this->propertyRendererConfiguration['inlineEditable']['prop'] ?? $this->propertyRendererConfiguration['default']['prop'];
             } else {
-                $prop = $this->propertyRendererConfiguration[$propertyConfiguration['type']]['prop'] ?? $this->propertyRendererConfiguration['default']['prop'];
+                /** @var string $type */
+                $type = $propertyConfiguration['type'];
+                $prop = $this->propertyRendererConfiguration[$type]['prop'] ?? $this->propertyRendererConfiguration['default']['prop'];
             }
             $propertyAcessorList[] =  str_replace('###NAME###', $name, $prop);
         }
