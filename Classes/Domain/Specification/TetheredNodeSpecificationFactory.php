@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Sitegeist\Noderobis\Domain\Specification;
 
-use http\Exception\InvalidArgumentException;
+use \InvalidArgumentException;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\Arrays;
@@ -27,8 +27,8 @@ class TetheredNodeSpecificationFactory
     {
         $items = [];
         foreach ($input as $item) {
-            list($name, $config) = explode(':', $item, 2);
-            $items[] = $this->generateTetheredNodeSpecificationFromCliInput($name, $config);
+            preg_match('/^(?<name>.*)\\((?<config>.*)\\)$/um', $item, $matches);
+            $items[] = $this->generateTetheredNodeSpecificationFromCliInput($matches['name'], $matches['config']);
         }
         return new TetheredNodeSpecificationCollection(... $items);
     }

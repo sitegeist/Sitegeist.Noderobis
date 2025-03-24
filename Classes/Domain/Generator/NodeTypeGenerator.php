@@ -79,9 +79,6 @@ class NodeTypeGenerator implements NodeTypeGeneratorInterface
                 $propertyConfiguration['options']['preset'] = $typeOrPreset->presetName;
             }
 
-            $propertyConfiguration['ui']['inspector']['group'] = 'default';
-            $propertyConfiguration['ui']['label'] = $nodeProperty->label?->label ?? $nodeProperty->name->name;
-
             if ($nodeProperty->description) {
                 $propertyConfiguration['ui']['help']['messsage'] = $nodeProperty->description->description;
             }
@@ -109,15 +106,15 @@ class NodeTypeGenerator implements NodeTypeGeneratorInterface
         # node type is created temporary to resolve presets and get access to inherited properties and groups
         $nodeType = new NodeType($nodeTypeSpecification->name->getFullName(), $superTypes, $localConfiguration);
 
-        # assign groups and reload if changed to  inspector properties
+        # assign groups labels and reload if changed to inspector properties
         foreach ($nodeTypeSpecification->nodeProperties as $nodeProperty) {
             if (array_key_exists('properties', $localConfiguration) === false) {
                 $localConfiguration['properties'] = [];
             }
             /** @var PropertySpecification $nodeProperty */
             $isInlineEditable = $nodeType->getConfiguration('properties.' . $nodeProperty->name->name . '.ui.inlineEditable');
-
             if (!$isInlineEditable) {
+                $localConfiguration['properties'][$nodeProperty->name->name]['ui']['label'] = $nodeProperty->label?->label ?? $nodeProperty->name->name;
                 $groupName = $nodeProperty->group?->groupName ?? 'default';
                 $localConfiguration['properties'][$nodeProperty->name->name]['ui']['inspector']['group'] = $groupName;
                 if ($nodeType->hasConfiguration('ui.groups.' . $groupName) == false) {
