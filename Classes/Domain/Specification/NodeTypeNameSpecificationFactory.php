@@ -27,7 +27,7 @@ class NodeTypeNameSpecificationFactory
     {
         $options = [];
 
-        foreach ($this->nodeTypeManager->getNodeTypes(false) as $nodeType) {
+        foreach ($this->nodeTypeManager->getNodeTypes(true) as $nodeType) {
             $options[] = $nodeType->getName();
         }
         return $options;
